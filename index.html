@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Tigershark : X12 Message Processing" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Tigershark</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/sbuss/TigerShark">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Tigershark</h1>
+          <h2 id="project_tagline">X12 Message Processing</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/sbuss/TigerShark/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/sbuss/TigerShark/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>TigerShark is an X12 EDI message parser that can be tailored to
+a specific partner in the health care payment ecosystem.</p>
+
+<p>It contains a test directory, tools and a demo web application that does
+a little bit of claim display and edit.</p>
+
+<h1>State of the Project</h1>
+
+<h2>Version 0.2</h2>
+
+<p>I've added a setup.py script and organized the files a bit more. I'm
+considering this a major version bump because the inclusion of setup.py and
+pregenerated parsers makes this a <em>lot</em> closer to a fully usable package. I
+make no claim that any parser other than the 835 works as expected, since I
+have only dealt with 835 files so far.</p>
+
+<p>Development will probably slow down now that things are mostly working. In the
+pipeline are auto-generated facades, or facades for 270/271 files, whichever
+I need to do first.</p>
+
+<p>If this sort of thing interests you, the awesome biotech startup where I
+work is hiring. I can't say much about it other than it involves genes, real
+science, and we are currently saving lives and improving the future of
+humanity. Do drop me a line.</p>
+
+<p>(Insurance billing is a painful but necessary step in this process.)</p>
+
+<h2>Version 0.1</h2>
+
+<p>TigerShark was initially developed by <a href="https://github.com/slott56">S. Lott</a>,
+et. al. The code was recently released at my request, after I stumbled on a
+few blog posts about the project:</p>
+
+<ol>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C465799452/E20080111205451.html">Python as Config Language - Forget XML and INI files (Jan 12, 2008)</a></li>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C465799452/E20080119082306.html">Two Python Config-File Design Patterns (Jan 19, 2008)</a></li>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C465799452/E20080126181253.html">Configuration File Scalability - Who Knew? (Revised) (Jan 26, 2008)</a></li>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C465799452/E20080328172746.html">Python as Configuration Language - More Good Ideas (March 28, 2008)</a></li>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C465799452/E20080331113231.html">Synchronicity and Document Object Models. (March 31, 2008)</a></li>
+<li><a href="http://www.itmaybeahack.com/homepage/iblog/C412398194/E20080401060105.html">POPO and GOPS - Plain Old Python Objects and Good Old Python Syntax (April 1, 2008)</a></li>
+</ol><p>By the time I found those posts I had been struggling with X12 files for
+about two weeks, dealing with broken parsers and PDFs that cost thousands of
+dollars that describe the spec over 750 pages in human - but not, or only
+barely, machine - readable format. (How the healthcare industry gets away with
+getting the government to mandate a proprietary file format which you have to
+pay to read is the subject of another rant...).</p>
+
+<p>I was struck by the amount of good, deep thought that went into the decisions
+S. Lott made, especially as compared to everything else I had seen. If you
+want to contribute to this project, I highly encourage you to go read those
+posts first.</p>
+
+<p>What you see in verion 0.1 is a series of hacks to get TigerShark working.
+I fixed a few bugs, added a facade for 835 files, and added setup instructions
+to the readme. The facade code is a mess (I didn't have enough time to fully
+understand the descriptor pattern and all of the underlying data structures
+Steven used), and I'll have to come back and make it nicer. Ultimately the
+facade should be able to be generated straight from the xml files which are
+used to build the parser. I removed a bunch of files that didn't appear to
+be used anywhere. I didn't try to get the demo django site working, and I'll
+either remove it or add instructions for it in a later version.</p>
+
+<p>Many thanks to <a href="https://github.com/slott56">S. Lott</a> for releasing the code
+and answering my questions, and to <a href="https://github.com/azoner">John Holland</a>
+for providing the xml files in his package <a href="https://github.com/azoner/pyx12">pyX12</a>.</p>
+
+<h1>Installation</h1>
+
+<pre><code>python setup.py install
+</code></pre>
+
+<h2>Manually Generating the Parsers</h2>
+
+<p>The <code>setup.py</code> script will install default parsers, but you might want to
+generate your own, or you're fixing the generation script and need to test.
+You can either convert all of the 4010 xml files in <code>Downloads/pyx12-1.5.0.zip</code>
+or convert a file individually (which gives you more control over the result).</p>
+
+<h3>Generating All Parsers From PyX12 archive</h3>
+
+<p>If you just want to generate all of the parsers, you can use the
+<code>generate_all_parsers</code> script:</p>
+
+<pre><code>python tools/generate_all_parsers.py ../Downloads/pyx12-1.5.0.zip -p parsers
+</code></pre>
+
+<p>This will generate all parsers in a directory called <code>parsers</code>.</p>
+
+<h3>Generating A Single Parser</h3>
+
+<p>After extracting the xml files, you can create the related parser objects
+using the tools:</p>
+
+<pre><code>cd Downloads/
+unzip pyx12-1.5.0.zip
+cd ../tigershark/parsers
+python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../../Downloads/pyx12-1.5.0/map/ -n parsed_835
+</code></pre>
+
+<p>This will generate a <code>M835_4010_X091_A1.py</code> parser in your current directory.</p>
+
+<h1>Usage</h1>
+
+<h2>Using a Parser</h2>
+
+<pre><code>from tigershark.parsers import M835_4010_X091_A1
+m = M835_4010_X091_A1.parsed_835
+with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
+    parsed = m.unmarshall(f.read().strip())
+</code></pre>
+
+<h2>Using a Facade</h2>
+
+<p>Once you have parsed an X12 file, you can build a Facade around it:</p>
+
+<pre><code>from tigershark.facade.f835 import f835_4010
+f = F835_4010(parsed)
+</code></pre>
+
+<p>Now you can access the segments of the X12 file in an easy and pythonic way</p>
+
+<pre><code>&gt;&gt;&gt; print(f.payee.zip)
+94066
+&gt;&gt;&gt; print(f.payer.name)
+United Healthcare
+&gt;&gt;&gt; print(len(f.claims))
+150
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Tigershark maintained by <a href="https://github.com/sbuss">sbuss</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
