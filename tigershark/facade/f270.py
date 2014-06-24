@@ -42,7 +42,7 @@ class Source(Facade, X12LoopBridge):
         super(Source, self).__init__(anX12Message, *args, **kwargs)
         self.source_information = first(self.loops(
             self._Information, anX12Message))
-        self.receivers = self.loops(Receiver, anX12Message)
+        self.receivers = self.loops(Receiver, anX12Message)  # N/A for 5010
 
 
 class Receiver(Facade, X12LoopBridge):
@@ -71,7 +71,7 @@ class Receiver(Facade, X12LoopBridge):
         super(Receiver, self).__init__(anX12Message, *args, **kwargs)
         self.receiver_information = first(self.loops(
             self._Information, anX12Message))
-        self.subscribers = self.loops(Subscriber, anX12Message)
+        self.subscribers = self.loops(Subscriber, anX12Message)  # N/A for 5010
 
 
 class EligibilityOrBenefitInquiry(X12SegmentBridge):
@@ -161,7 +161,7 @@ class Subscriber(Facade, X12LoopBridge):
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = self.loops(
                 self._EligibilityOrBenefitInformation, anX12Message)
-        self.dependents = self.loops(Dependent, anX12Message)
+        self.dependents = self.loops(Dependent, anX12Message)  # N/A for 5010
 
 
 class Dependent(Facade, X12LoopBridge):
@@ -227,3 +227,18 @@ class F270_4010(Facade):
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.source = first(self.loops(Source, anX12Message))
+
+
+class F270_5010(Facade):
+    def __init__(self, anX12Message):
+        st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
+        if len(st_loops) > 0:
+            self.facades = []
+            for loop in st_loops:
+                self.facades.append(F270_5010(loop))
+        else:
+            self.header = first(self.loops(Header, anX12Message))
+            self.source = first(self.loops(Source, anX12Message))
+            self.receivers = self.loops(Receiver, anX12Message)
+            self.subscribers = self.loops(Subscriber, anX12Message)
+            self.dependents = self.loops(Dependent, anX12Message)

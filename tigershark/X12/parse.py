@@ -479,6 +479,7 @@ class Parser( object ):
         aChild.occurance= len(previous)
         aChild.total_occurs= 1+len(previous)
         self.structure.append( aChild )
+        self.structure.sort(key=lambda c: c.position)
         for p in previous:
             p.total_occurs= 1+len(previous)
     def getParts( self, segments, theLoop ):

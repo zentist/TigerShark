@@ -351,3 +351,15 @@ class F271_4010(Facade):
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.source = first(self.loops(Source, anX12Message))
+
+
+class F271_5010(Facade):
+    def __init__(self, anX12Message):
+        st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
+        if len(st_loops) > 0:
+            self.facades = []
+            for loop in st_loops:
+                self.facades.append(F271_5010(loop))
+        else:
+            self.header = first(self.loops(Header, anX12Message))
+            self.source = first(self.loops(Source, anX12Message))

@@ -349,13 +349,15 @@ class ParserBuilder( object ):
         name= self.getChildTextValue( segmentNode, "name" )
         usage= self.getChildTextValue( segmentNode, "usage" )
         pos= self.getChildTextValue( segmentNode, "pos" )
+        if isinstance(context, Loop) and context.props.looptype == 'wrapper':
+            pos = context.position
         max_use= self.getChildTextValue( segmentNode, "max_use" )
         syntax= self.getChildTextValue( segmentNode, "syntax" )
         self.log.debug( "%*sSegment xid %r: name %r usage %r pos %r max_use %r syntax %r",
                        nesting*2, '', segXid, name, usage, pos, max_use, syntax )
         theSegment= Segment(
             segXid,
-            Properties(desc=name,req_sit=usage,pos=pos,repeat=max_use,syntax=syntax),
+            Properties(desc=name,req_sit=usage,position=pos,repeat=max_use,syntax=syntax),
             )
 
         for c in segmentNode.childNodes:
@@ -385,12 +387,14 @@ class ParserBuilder( object ):
         name= self.getChildTextValue( loopNode, "name" )
         usage= self.getChildTextValue( loopNode, "usage" )
         pos= self.getChildTextValue( loopNode, "pos" )
+        if isinstance(context, Loop) and context.props.looptype == 'wrapper':
+            pos = context.position
         repeat= self.getChildTextValue( loopNode, "repeat" )
         self.log.debug( "%*sLoop xid %r type %r: name %r usage %r pos %r repear %r",
                        nesting*2, '', loopXid, loopType, name, usage, pos, repeat )
         theLoop= Loop(
             loopXid,
-            Properties(desc=name,req_sit=usage,pos=pos,repeat=repeat,looptype=loopType),
+            Properties(desc=name,req_sit=usage,position=pos,repeat=repeat,looptype=loopType),
             )
 
         for c in loopNode.childNodes:
@@ -409,7 +413,11 @@ class ParserBuilder( object ):
             warnings.warn( EmptyLoopWarning("Empty Loop %r" % (theLoop,) ) )
             # optimize this out of existence
         else:
-            context.append( theLoop )
+            if loopType == 'wrapper':
+                # child takes the parent's position
+                context.append( theLoop.structure[0] )
+            else:
+                context.append( theLoop )
     def build( self, xmlDoc, name=None ):
         """Build the overall :class:`X12.parse.Message` parser.
         
@@ -590,4 +598,4 @@ if __name__ == "__main__":
     else:
         name = args.py_file.rsplit('/', 1)[1]
         name = name.split('.', 1)[0]
-    writeFile(args.base_dir, args.py_file, name, x12, args.structure)
+    writeFile(args.py_file, name, x12, args.structure)
