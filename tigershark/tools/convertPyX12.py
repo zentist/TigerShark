@@ -269,17 +269,18 @@ class ParserBuilder( object ):
         seq= self.getChildTextValue( compositeNode, "seq" )
         data_ele= self.getChildTextValue( compositeNode, "data_ele" )
         refdes= self.getChildTextValue( compositeNode, "refdes" )
+        repeat= self.getChildTextValue( compositeNode, "repeat" )  # TODO add support
         self.log.debug( "%*sComposite name %r usage %r seq %r data_ele %r refdes %r",
                        nesting*2, '', name, usage, seq, data_ele, refdes )
         theComposite= Composite(
             data_ele,
-            Properties( desc=name, req_sit=usage, seq=seq, refdes=refdes ) )
+            Properties( desc=name, req_sit=usage, seq=seq, refdes=refdes, repeat=repeat ) )
         for c in compositeNode.childNodes:
             # Want to preserve the original XML order of <element>
             if c.nodeType != DOM.Node.ELEMENT_NODE: continue
             if c.nodeName == "element":
                 self.buildElement( c, theComposite, nesting+1 )
-            elif c.nodeName in ( "name", "usage", "seq", "data_ele", 'refdes',):
+            elif c.nodeName in ( "name", "usage", "seq", "data_ele", 'refdes', 'repeat'):
                 pass # already consumed
             else:
                 warnings.warn( XMLWarning("Unexpected %r" % (c,) ) )
@@ -302,6 +303,7 @@ class ParserBuilder( object ):
         usage= self.getChildTextValue( elementNode, "usage" )
         seq= self.getChildTextValue( elementNode, "seq" )
         data_ele= self.getChildTextValue( elementNode, "data_ele" )
+        repeat= self.getChildTextValue( elementNode, "repeat" )  # TODO add support
         self.log.debug( "%*sElement id %r name %r usage %r seq %r data_ele %r",
                        nesting*2, '', eltXid, name, usage, seq, data_ele )
         if not self.dataDictionary.has_key( data_ele ):
@@ -320,7 +322,7 @@ class ParserBuilder( object ):
                     warnings.warn( Extension("External Codes Not Implemented") )
                 else:
                     codes= self.getValidCodes( c )
-            elif c.nodeName in ( "name", "usage", "seq", "data_ele", ):
+            elif c.nodeName in ( "name", "usage", "seq", "data_ele", 'repeat'):
                 pass # already consumed
             else:
                 warnings.warn( XMLWarning("Unexpected %r" % (c,) ) )
@@ -329,7 +331,7 @@ class ParserBuilder( object ):
         theElement= Element(
             eltXid,
             Properties(desc=name, req_sit=usage, seq=seq, data_ele=data_ele,
-                       data_type=data_type_tuple, codes=codes, )
+                       data_type=data_type_tuple, codes=codes, repeat=repeat, )
             )
 
         if self.dataDictionary.has_key( data_ele ) and len(codes) != 0:

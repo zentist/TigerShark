@@ -669,7 +669,7 @@ class Segment( Parser ):
         """
         try:
             if self.repeat.startswith(">"):
-                repeat = 999
+                repeat = int(self.repeat[1:])
             else:
                 repeat = int(self.repeat)
         except:
