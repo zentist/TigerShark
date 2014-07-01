@@ -194,6 +194,7 @@ CREATE TABLE X278_GS(
 
 class TestDjangoVisitors(unittest.TestCase):
     """Look at the Django structure emitted"""
+    @unittest.skip('Django tests disabled')
     def testDjangoModel( self ):
         dj= DjangoModelVisitor( )
         parse_278.visit( dj )
@@ -225,6 +226,7 @@ class Segment_ST(models.Model):
         sLines= sample.splitlines()
         for i in range(len(sLines)):
             self.assertEqual( tLines[i].rstrip(), sLines[i].rstrip() )
+    @unittest.skip('Django tests disabled')
     def testDjangoAdmin( self ):
         dj= DjangoAdminVisitor( )
         parse_278.visit( dj )
