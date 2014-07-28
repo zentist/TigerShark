@@ -363,3 +363,6 @@ class F271_5010(Facade):
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.source = first(self.loops(Source, anX12Message))
+            self.receivers = self.loops(Receiver, anX12Message)
+            self.subscribers = self.loops(Subscriber, anX12Message)
+            self.dependents = self.loops(Dependent, anX12Message)
