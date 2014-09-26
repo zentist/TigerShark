@@ -250,6 +250,10 @@ Class Definitions
 ..  autofunction:: preParse
 """
 from __future__ import print_function
+from itertools import chain
+from itertools import count
+from itertools import izip
+from itertools import repeat
 import logging
 
 # This is only to give us access a default Factory.
@@ -666,19 +670,19 @@ class Segment( Parser ):
         :param segments: list of SegmentTokens for the current message.
         :returns: yields a single parsed Segment or raises StopIteration
         """
-        try:
-            if self.repeat.startswith(">"):
-                repeat = 999
-            else:
-                repeat = int(self.repeat)
-        except:
-            repeat = 1
-        for i in range(repeat):
+        if self.repeat.startswith(">"):
+            length_loop = count()
+            required_loop = chain([self.required], repeat(False))
+        else:
+            length_loop = xrange(int(self.repeat) if self.repeat.isdigit() else 1)
+            required_loop = repeat(self.required)
+
+        for required, _ in izip(required_loop, length_loop):
             if self.match( segments[0] ):
                 compPunct= self.getMessage().compPunct
                 theSegment= self.theFactory.makeSegment( segments.pop(0), compPunct, self )
                 yield theSegment
-            elif self.situational or self.notused:
+            elif not required:
                 raise StopIteration
             else:
                 error= ParseError(
