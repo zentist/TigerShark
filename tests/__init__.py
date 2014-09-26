@@ -6,7 +6,7 @@ run_tests
 
 ..  automodule:: test.run_tests
     :members:
-    
+
 test_navigation
 ===============
 
