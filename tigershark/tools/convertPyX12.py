@@ -388,7 +388,7 @@ class ParserBuilder( object ):
         usage= self.getChildTextValue( loopNode, "usage" )
         pos= self.getChildTextValue( loopNode, "pos" )
         repeat= self.getChildTextValue( loopNode, "repeat" )
-        self.log.debug( "%*sLoop xid %r type %r: name %r usage %r pos %r repear %r",
+        self.log.debug( "%*sLoop xid %r type %r: name %r usage %r pos %r repeat %r",
                        nesting*2, '', loopXid, loopType, name, usage, pos, repeat )
         theLoop= Loop(
             loopXid,
