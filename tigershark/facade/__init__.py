@@ -937,19 +937,24 @@ class TM(Conversion):
                 centiseconds=int(value.microsecond / 10000))
 
 
-class D8( Conversion ):
+class D8(Conversion):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
         if raw is None:
             return raw
-        yy,mm,dd = int(raw[0:4]), int(raw[4:6]), int(raw[6:8])
-        return datetime.date( yy,mm,dd )
+
+        if len(raw) >= 8:
+            year, month, day = int(raw[0:4]), int(raw[4:6]), int(raw[6:8])
+        else:
+            year, month, day = int(raw[0:2]), int(raw[2:4]), int(raw[4:6])
+            year += datetime.datetime.strptime('00', '%y').year
+
+        return datetime.date(year, month, day)
+
     @staticmethod
-    def python_to_x12( value ):
-        if value is None:
-            return ""
-        return value.strftime( "%4Y%2m%2d" )
+    def python_to_x12(value):
+        return '' if value is None else value.strftime("%4Y%2m%2d")
 
 
 class DR( Conversion ):
