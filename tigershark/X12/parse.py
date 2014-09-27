@@ -825,12 +825,14 @@ class Message( Parser ):
             SegmentToken( seg.split(eltPunct) )
                 for seg in msg.split( segPunct )
                     if len(seg) > 0]
-    def unmarshall( self, message, factory=MessageFactory ):
+    def unmarshall(self, message, factory=MessageFactory, ignoreExtra=False):
         """Unmarshall the text version of an X12 message
         into a structure defined by the given factory.
         
         :param message: X12 source text
         :param factory: A message instance Factory, by default :class:`X12.message.Factory`.
+        :param ignoreExtra: If True, extra segments are ignored instead of
+            causing a parse error.
         :returns: :class:`X12.message.X12Message` structure
         :raises ParseError: if the message does not fit this parser's structure.
         """
@@ -846,7 +848,7 @@ class Message( Parser ):
             raise ex
         theMssg= self.factory.makeMessage( self.name )
         self.getParts( self.segmentTokens, theMssg )
-        if len(self.segmentTokens) != 0:
+        if len(self.segmentTokens) != 0 and not ignoreExtra:
             names= ", ".join( s[0] for s in self.segmentTokens )
             raise ParseError(
                 "Extra segments {0!r}".format( names ),
