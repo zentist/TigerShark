@@ -1,13 +1,52 @@
 from decimal import Decimal
 
+from tigershark.facade import D8
 from tigershark.facade import ElementAccess
 from tigershark.facade import Facade
 from tigershark.facade import Money
+from tigershark.facade import TM
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import enum
 from tigershark.facade.enums.common import id_code_qualifier
 from tigershark.facade.enums.common import reference_id_qualifier
 from tigershark.facade.enums.remittance import claim_adjustment_reasons
+
+
+class ControlHeader(X12LoopBridge):
+
+    authorization_information_qualifier = ElementAccess("ISA", 1)
+    authorization_information = ElementAccess("ISA", 2)
+
+    security_information_qualifier = ElementAccess("ISA", 3)
+    security_information = ElementAccess("ISA", 4)
+
+    interchange_sender_id_qualifier = ElementAccess("ISA", 5)
+    interchange_sender_id = ElementAccess("ISA", 6)
+
+    interchange_receiver_id_qualifier = ElementAccess("ISA", 7)
+    interchange_receiver_id = ElementAccess("ISA", 8)
+
+    interchange_date = ElementAccess("ISA", 9, x12type=D8)
+    interchange_time = ElementAccess("ISA", 10, x12type=TM)
+
+    interchange_control_standards_id = ElementAccess("ISA", 11)
+    interchange_control_version_number = ElementAccess("ISA", 12)
+    interchange_control_number = ElementAccess("ISA", 13)
+
+    acknowledgement_requested = ElementAccess("ISA", 14)
+    test_indicator = ElementAccess("ISA", 15)
+    subelement_separator = ElementAccess("ISA", 16)
+
+
+class IdentifyingHeaders(Facade):
+
+    def __init__(self, x12_message):
+        isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
+
+        if isa_loops:
+            self.facades = map(IdentifyingHeaders, isa_loops)
+        else:
+            self.control = ControlHeader(x12_message)
 
 
 class ClaimAdjustment(X12LoopBridge):
