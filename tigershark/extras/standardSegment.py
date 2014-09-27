@@ -19,7 +19,9 @@ X12 Segments.
 """
 from __future__ import print_function
 
-from tigershark.X12.parse import Segment, Element, Properties
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Properties
+from tigershark.X12.parse import Segment
 
 ISAFields = """\
 ISA01 Authorization Information Qualifier
@@ -86,8 +88,8 @@ def buildSegment(name, desc, fieldText):
     """
     segment = Segment(name, Properties(desc=desc))
     for line in filter(None, fieldText.splitlines()):
-        name, description = line.strip().split()
-        element = Element(name, Properties(desc=description))
+        name, description = line.strip().split(None, 1)
+        element = Element(name, Properties(desc=description, codes=[]))
         segment.append(element)
     return segment
 
