@@ -12,7 +12,7 @@ from tigershark.facade.enums.common import reference_id_qualifier
 from tigershark.facade.enums.remittance import claim_adjustment_reasons
 
 
-class ControlHeader(X12LoopBridge):
+class InterchangeControlHeader(X12LoopBridge):
 
     authorization_information_qualifier = ElementAccess("ISA", 1)
     authorization_information = ElementAccess("ISA", 2)
@@ -37,6 +37,33 @@ class ControlHeader(X12LoopBridge):
     test_indicator = ElementAccess("ISA", 15)
     subelement_separator = ElementAccess("ISA", 16)
 
+    def __init__(self, x12_message):
+        super(InterchangeControlHeader, self).__init__(x12_message)
+
+        gs_loops = x12_message.descendant('LOOP', name='GS_LOOP')
+
+        if gs_loops:
+            self.functional_group = FunctionalGroupHeader(gs_loops[0])
+        else:
+            self.functional_group = None
+
+
+class FunctionalGroupHeader(X12LoopBridge):
+
+    functional_id_code = ElementAccess("GS", 1)
+
+    application_sender_code = ElementAccess("GS", 2)
+    application_receiver_code = ElementAccess("GS", 3)
+
+    date = ElementAccess("GS", 4, x12type=D8)
+    time = ElementAccess("GS", 5, x12type=TM)
+
+    group_control_number = ElementAccess("GS", 6)
+
+    responsible_agency_code = ElementAccess("GS", 7)
+
+    version_indicator_code = ElementAccess("GS", 8)
+
 
 class IdentifyingHeaders(Facade):
 
@@ -46,7 +73,7 @@ class IdentifyingHeaders(Facade):
         if isa_loops:
             self.facades = map(IdentifyingHeaders, isa_loops)
         else:
-            self.control = ControlHeader(x12_message)
+            self.interchange_control = InterchangeControlHeader(x12_message)
 
 
 class ClaimAdjustment(X12LoopBridge):

@@ -4,7 +4,19 @@ from tigershark.X12.parse import Message
 from tigershark.X12.parse import Properties
 
 
-ISAParser = Loop(
+GSLoop = Loop(
+    u'GS_LOOP',
+    Properties(
+        position=u'0200',
+        looptype=u'explicit',
+        repeat=u'>1',
+        req_sit=u'R',
+        desc=u'Functional Group Header',
+    ),
+    standardSegment.gs,
+)
+
+ISALoop = Loop(
     u'ISA_LOOP',
     Properties(
         position=u'0010',
@@ -14,6 +26,7 @@ ISAParser = Loop(
         desc=u'Interchange Control Header',
     ),
     standardSegment.isa,
+    GSLoop,
 )
 
 IdentifyingParser = Message(
@@ -21,5 +34,5 @@ IdentifyingParser = Message(
     Properties(
         desc=u'HIPAA Health Care Claim Payment/Advice 005010X221A1 835W1',
     ),
-    ISAParser,
+    ISALoop,
 )
