@@ -64,6 +64,23 @@ class FunctionalGroupHeader(X12LoopBridge):
 
     version_indicator_code = ElementAccess("GS", 8)
 
+    def __init__(self, x12_message):
+        super(FunctionalGroupHeader, self).__init__(x12_message)
+
+        st_loops = x12_message.descendant('LOOP', name='ST_LOOP')
+
+        if st_loops:
+            self.transaction_set = TransactionSetHeader(st_loops[0])
+        else:
+            self.transaction_set = None
+
+
+class TransactionSetHeader(X12LoopBridge):
+
+    transaction_set_identifier_code = ElementAccess("ST", 1)
+
+    transaction_set_control_number = ElementAccess("ST", 2)
+
 
 class IdentifyingHeaders(Facade):
 

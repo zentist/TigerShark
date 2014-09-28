@@ -4,6 +4,18 @@ from tigershark.X12.parse import Message
 from tigershark.X12.parse import Properties
 
 
+STLoop = Loop(
+    u'ST_LOOP',
+    Properties(
+        position=u'0200',
+        looptype=u'explicit',
+        repeat=u'>1',
+        req_sit=u'R',
+        desc=u'Transaction Set Header',
+    ),
+    standardSegment.st,
+)
+
 GSLoop = Loop(
     u'GS_LOOP',
     Properties(
@@ -14,6 +26,7 @@ GSLoop = Loop(
         desc=u'Functional Group Header',
     ),
     standardSegment.gs,
+    STLoop,
 )
 
 ISALoop = Loop(
