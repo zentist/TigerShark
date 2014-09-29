@@ -17,7 +17,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
     def test_5010_details(self):
         facade = self.parse_file('5010-835-example-1.txt')
 
-        control = facade.facades[0].interchange_control
+        control = facade.interchange_controls[0]
 
         self.assertEqual(control.authorization_information_qualifier, '00')
         self.assertEqual(control.authorization_information, '          ')
@@ -42,7 +42,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
         self.assertEqual(control.test_indicator, 'T')
         self.assertEqual(control.subelement_separator, '|')
 
-        group = control.functional_group
+        group = control.functional_groups[0]
 
         self.assertEqual(group.functional_id_code, 'HP')
 
@@ -63,7 +63,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
     def test_4010_details(self):
         facade = self.parse_file('271-example.txt')
 
-        control = facade.facades[0].interchange_control
+        control = facade.interchange_controls[0]
 
         self.assertEqual(control.authorization_information_qualifier, '00')
         self.assertEqual(control.authorization_information, '          ')
@@ -88,7 +88,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
         self.assertEqual(control.test_indicator, 'P')
         self.assertEqual(control.subelement_separator, '^')
 
-        group = control.functional_group
+        group = control.functional_groups[0]
 
         self.assertEqual(group.functional_id_code, 'HB')
 

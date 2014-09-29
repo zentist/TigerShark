@@ -39,13 +39,8 @@ class InterchangeControlHeader(X12LoopBridge):
 
     def __init__(self, x12_message):
         super(InterchangeControlHeader, self).__init__(x12_message)
-
         gs_loops = x12_message.descendant('LOOP', name='GS_LOOP')
-
-        if gs_loops:
-            self.functional_group = FunctionalGroupHeader(gs_loops[0])
-        else:
-            self.functional_group = None
+        self.functional_groups = map(FunctionalGroupHeader, gs_loops)
 
 
 class FunctionalGroupHeader(X12LoopBridge):
@@ -66,13 +61,8 @@ class FunctionalGroupHeader(X12LoopBridge):
 
     def __init__(self, x12_message):
         super(FunctionalGroupHeader, self).__init__(x12_message)
-
         st_loops = x12_message.descendant('LOOP', name='ST_LOOP')
-
-        if st_loops:
-            self.transaction_set = TransactionSetHeader(st_loops[0])
-        else:
-            self.transaction_set = None
+        self.transactions_sets = map(TransactionSetHeader, st_loops)
 
     @property
     def version_tuple(self):
@@ -99,12 +89,9 @@ class TransactionSetHeader(X12LoopBridge):
 class IdentifyingHeaders(Facade):
 
     def __init__(self, x12_message):
+        super(IdentifyingHeaders, self).__init__()
         isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
-
-        if isa_loops:
-            self.facades = map(IdentifyingHeaders, isa_loops)
-        else:
-            self.interchange_control = InterchangeControlHeader(x12_message)
+        self.interchange_controls = map(InterchangeControlHeader, isa_loops)
 
 
 class ClaimAdjustment(X12LoopBridge):
