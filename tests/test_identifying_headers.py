@@ -59,3 +59,49 @@ class TestIdentifyingHeaders(unittest.TestCase):
         self.assertEqual(group.version_indicator_code, '005010X221A1')
 
         self.assertEqual(group.version_tuple, (5, 1, 0))
+
+    def test_4010_details(self):
+        facade = self.parse_file('271-example.txt')
+
+        control = facade.facades[0].interchange_control
+
+        self.assertEqual(control.authorization_information_qualifier, '00')
+        self.assertEqual(control.authorization_information, '          ')
+
+        self.assertEqual(control.security_information_qualifier, '00')
+        self.assertEqual(control.security_information, '          ')
+
+        self.assertEqual(control.interchange_sender_id_qualifier, 'ZZ')
+        self.assertEqual(control.interchange_sender_id, 'ZIRMED         ')
+
+        self.assertEqual(control.interchange_receiver_id_qualifier, 'ZZ')
+        self.assertEqual(control.interchange_receiver_id, '12345          ')
+
+        self.assertEqual(control.interchange_date, datetime.date(2012, 6, 5))
+        self.assertEqual(control.interchange_time, datetime.time(23, 24))
+
+        self.assertEqual(control.interchange_control_standards_id, 'U')
+        self.assertEqual(control.interchange_control_version_number, '00401')
+        self.assertEqual(control.interchange_control_number, '000050033')
+
+        self.assertEqual(control.acknowledgement_requested, '1')
+        self.assertEqual(control.test_indicator, 'P')
+        self.assertEqual(control.subelement_separator, '^')
+
+        group = control.functional_group
+
+        self.assertEqual(group.functional_id_code, 'HB')
+
+        self.assertEqual(group.application_sender_code, 'ZIRMED')
+        self.assertEqual(group.application_receiver_code, '12345')
+
+        self.assertEqual(group.date, datetime.date(2012, 6, 5))
+        self.assertEqual(group.time, datetime.time(23, 24))
+
+        self.assertEqual(group.group_control_number, '50025')
+
+        self.assertEqual(group.responsible_agency_code, 'X')
+
+        self.assertEqual(group.version_indicator_code, '004010X092A1')
+
+        self.assertEqual(group.version_tuple, (4, 1, 0))
