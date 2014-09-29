@@ -1,3 +1,4 @@
+from collections import namedtuple
 from decimal import Decimal
 
 from tigershark.facade import D8
@@ -10,6 +11,12 @@ from tigershark.facade import enum
 from tigershark.facade.enums.common import id_code_qualifier
 from tigershark.facade.enums.common import reference_id_qualifier
 from tigershark.facade.enums.remittance import claim_adjustment_reasons
+
+
+VersionTuple = namedtuple('VersionTuple', ('version', 'release', 'subrelease'))
+
+VERSION_4010 = VersionTuple(4, 1, 0)
+VERSION_5010 = VersionTuple(5, 1, 0)
 
 
 class InterchangeControlHeader(X12LoopBridge):
@@ -62,20 +69,20 @@ class FunctionalGroupHeader(X12LoopBridge):
     def __init__(self, x12_message):
         super(FunctionalGroupHeader, self).__init__(x12_message)
         st_loops = x12_message.descendant('LOOP', name='ST_LOOP')
-        self.transactions_sets = map(TransactionSetHeader, st_loops)
+        self.transaction_sets = map(TransactionSetHeader, st_loops)
 
     @property
     def version_tuple(self):
         """
-        Return a tuple of (version, release, sub-release) numbers.
+        Return a tuple of (version, release, subrelease) numbers.
 
         Returns None if no version is given or has a different format.
         """
         if self.responsible_agency_code == 'X':
-            return (
-                int(self.version_indicator_code[0:3]),
-                int(self.version_indicator_code[3:5]),
-                int(self.version_indicator_code[5:6]),
+            return VersionTuple(
+                version=int(self.version_indicator_code[0:3]),
+                release=int(self.version_indicator_code[3:5]),
+                subrelease=int(self.version_indicator_code[5:6]),
             )
 
 

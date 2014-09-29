@@ -3,7 +3,32 @@ import os
 import unittest
 
 from tigershark.facade.common import IdentifyingHeaders
+from tigershark.facade.common import VERSION_4010
+from tigershark.facade.common import VERSION_5010
 from tigershark.parsers import IdentifyingParser
+
+
+# Map (version tuple, transaction set identifier) to test file names.
+TEST_FILE_MAP = {
+    (VERSION_4010, '271'): '271-dependent-benefits.txt',
+    (VERSION_4010, '271'): '271-example-2.txt',
+    (VERSION_4010, '271'): '271-example-dependent-rejection.txt',
+    (VERSION_4010, '271'): '271-example.txt',
+    (VERSION_4010, '271'): '271-related-entity.txt',
+    (VERSION_4010, '276'): 'TEST 276 TXNs.txt',
+    (VERSION_4010, '278'): 'TEST 278_13 TXNS.txt',
+    (VERSION_4010, '278'): 'TEST 278_28 TXNS_SOA.txt',
+    (VERSION_4010, '835'): '835-example-2.txt',
+    (VERSION_4010, '835'): '835-example.txt',
+    (VERSION_4010, '837'): '837-example.txt',
+    (VERSION_4010, '837'): '837I-Examples.txt',
+    (VERSION_4010, '837'): '837I-Patient-NotSubscriber.txt',
+    (VERSION_4010, '837'): '837I-Patient-NotSubscriber2.txt',
+    (VERSION_4010, '837'): '837I-Patient-Subscriber.txt',
+    (VERSION_5010, '835'): '5010-835-example-1.txt',
+    (VERSION_5010, '835'): '5010-835-example-2.txt',
+    (VERSION_5010, '835'): '5010-835-example-3.txt',
+}
 
 
 class TestIdentifyingHeaders(unittest.TestCase):
@@ -58,7 +83,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
 
         self.assertEqual(group.version_indicator_code, '005010X221A1')
 
-        self.assertEqual(group.version_tuple, (5, 1, 0))
+        self.assertEqual(group.version_tuple, VERSION_5010)
 
     def test_4010_details(self):
         facade = self.parse_file('271-example.txt')
@@ -104,4 +129,15 @@ class TestIdentifyingHeaders(unittest.TestCase):
 
         self.assertEqual(group.version_indicator_code, '004010X092A1')
 
-        self.assertEqual(group.version_tuple, (4, 1, 0))
+        self.assertEqual(group.version_tuple, VERSION_4010)
+
+    def test_all_parseable(self):
+        all_tests = TEST_FILE_MAP.iteritems()
+        for (version_tuple, transaction_set_identifier_code), name in all_tests:  # nopep8
+            facade = self.parse_file(name)
+            control = facade.interchange_controls[0]
+            group = control.functional_groups[0]
+            self.assertEqual(group.version_tuple, version_tuple)
+            transaction_set = group.transaction_sets[0]
+            self.assertEqual(transaction_set.transaction_set_identifier_code,
+                             transaction_set_identifier_code)
