@@ -74,6 +74,20 @@ class FunctionalGroupHeader(X12LoopBridge):
         else:
             self.transaction_set = None
 
+    @property
+    def version_tuple(self):
+        """
+        Return a tuple of (version, release, sub-release) numbers.
+
+        Returns None if no version is given or has a different format.
+        """
+        if self.responsible_agency_code == 'X':
+            return (
+                int(self.version_indicator_code[0:3]),
+                int(self.version_indicator_code[3:5]),
+                int(self.version_indicator_code[5:6]),
+            )
+
 
 class TransactionSetHeader(X12LoopBridge):
 

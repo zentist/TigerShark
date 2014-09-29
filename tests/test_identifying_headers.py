@@ -41,3 +41,21 @@ class TestIdentifyingHeaders(unittest.TestCase):
         self.assertEqual(control.acknowledgement_requested, '0')
         self.assertEqual(control.test_indicator, 'T')
         self.assertEqual(control.subelement_separator, '|')
+
+        group = control.functional_group
+
+        self.assertEqual(group.functional_id_code, 'HP')
+
+        self.assertEqual(group.application_sender_code, '5010TEST')
+        self.assertEqual(group.application_receiver_code, '835RECVR')
+
+        self.assertEqual(group.date, datetime.date(2011, 9, 30))
+        self.assertEqual(group.time, datetime.time(10, 7, 18))
+
+        self.assertEqual(group.group_control_number, '45920001')
+
+        self.assertEqual(group.responsible_agency_code, 'X')
+
+        self.assertEqual(group.version_indicator_code, '005010X221A1')
+
+        self.assertEqual(group.version_tuple, (5, 1, 0))
