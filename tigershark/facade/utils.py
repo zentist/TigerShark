@@ -1,5 +1,5 @@
 def first(l):
     try:
         return l.pop()
-    except:
+    except Exception:
         return None
