@@ -141,3 +141,4 @@ class TestIdentifyingHeaders(unittest.TestCase):
             transaction_set = group.transaction_sets[0]
             self.assertEqual(transaction_set.transaction_set_identifier_code,
                              transaction_set_identifier_code)
+            self.assertIs(transaction_set.functional_group, group)

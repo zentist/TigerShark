@@ -19,6 +19,14 @@ VERSION_4010 = VersionTuple(4, 1, 0)
 VERSION_5010 = VersionTuple(5, 1, 0)
 
 
+class IdentifyingHeaders(Facade):
+
+    def __init__(self, x12_message):
+        super(IdentifyingHeaders, self).__init__()
+        isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
+        self.interchange_controls = map(InterchangeControlHeader, isa_loops)
+
+
 class InterchangeControlHeader(X12LoopBridge):
 
     authorization_information_qualifier = ElementAccess("ISA", 1)
@@ -69,7 +77,9 @@ class FunctionalGroupHeader(X12LoopBridge):
     def __init__(self, x12_message):
         super(FunctionalGroupHeader, self).__init__(x12_message)
         st_loops = x12_message.descendant('LOOP', name='ST_LOOP')
-        self.transaction_sets = map(TransactionSetHeader, st_loops)
+        self.transaction_sets = [
+            TransactionSetHeader(self, st_loop)
+            for st_loop in st_loops]
 
     @property
     def version_tuple(self):
@@ -92,13 +102,9 @@ class TransactionSetHeader(X12LoopBridge):
 
     transaction_set_control_number = ElementAccess("ST", 2)
 
-
-class IdentifyingHeaders(Facade):
-
-    def __init__(self, x12_message):
-        super(IdentifyingHeaders, self).__init__()
-        isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
-        self.interchange_controls = map(InterchangeControlHeader, isa_loops)
+    def __init__(self, functional_group, x12_message):
+        super(TransactionSetHeader, self).__init__(x12_message)
+        self.functional_group = functional_group
 
 
 class ClaimAdjustment(X12LoopBridge):
