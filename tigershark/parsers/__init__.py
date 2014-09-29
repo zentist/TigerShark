@@ -42,10 +42,10 @@ ISALoop = Loop(
     GSLoop,
 )
 
-IdentifyingParser = Message(
-    u'835W1',
+X12Parser = Message(
+    u'ASC X12 Interchange Control Structure',
     Properties(
-        desc=u'HIPAA Health Care Claim Payment/Advice 005010X221A1 835W1',
+        desc=u'ASC X12 Control Structure',
     ),
     ISALoop,
 )

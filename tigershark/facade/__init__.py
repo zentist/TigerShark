@@ -247,7 +247,6 @@ from decimal import Decimal
 
 class Facade(object):
 
-    @staticmethod
     def loops(self, theClass, anX12Message, *args, **kwargs):
         return [theClass(loop, *args, **kwargs) for loop in
                 anX12Message.descendant("loop", theClass.loopName)]
@@ -257,7 +256,7 @@ class MissingSegment( Exception ):
     """This exception is raised if the target Segment cannot be found
     within the Loop.
     """
-    pass
+
 
 class X12LoopBridge( object ):
     """Bridge between a user-focused class/attribute definition and an :class:`X12.message.X12Loop`.
