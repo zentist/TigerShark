@@ -13,10 +13,10 @@ VERSION_4010 = VersionTuple(4, 1, 0)
 VERSION_5010 = VersionTuple(5, 1, 0)
 
 
-class IdentifyingHeaders(Facade):
+class ControlHeaders(Facade):
 
     def __init__(self, x12_message):
-        super(IdentifyingHeaders, self).__init__()
+        super(ControlHeaders, self).__init__()
         isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
         self.interchange_controls = map(InterchangeControlHeader, isa_loops)
 

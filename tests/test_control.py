@@ -2,9 +2,9 @@ import datetime
 import os
 import unittest
 
-from tigershark.facade.common import IdentifyingHeaders
-from tigershark.facade.common import VERSION_4010
-from tigershark.facade.common import VERSION_5010
+from tigershark.facade.control import ControlHeaders
+from tigershark.facade.control import VERSION_4010
+from tigershark.facade.control import VERSION_5010
 from tigershark.parsers import IdentifyingParser
 
 
@@ -37,7 +37,7 @@ class TestIdentifyingHeaders(unittest.TestCase):
         with open(os.path.join('tests', name)) as f:
             parsed = IdentifyingParser.unmarshall(
                 f.read().strip(), ignoreExtra=True)
-        return IdentifyingHeaders(parsed)
+        return ControlHeaders(parsed)
 
     def test_5010_details(self):
         facade = self.parse_file('5010-835-example-1.txt')
