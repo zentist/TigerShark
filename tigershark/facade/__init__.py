@@ -246,6 +246,8 @@ from decimal import Decimal
 
 
 class Facade(object):
+
+    @staticmethod
     def loops(self, theClass, anX12Message, *args, **kwargs):
         return [theClass(loop, *args, **kwargs) for loop in
                 anX12Message.descendant("loop", theClass.loopName)]
