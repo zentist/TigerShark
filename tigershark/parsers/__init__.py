@@ -42,10 +42,25 @@ ISALoop = Loop(
     GSLoop,
 )
 
-X12Parser = Message(
+ControlParser = Message(
     u'ASC X12 Interchange Control Structure',
     Properties(
         desc=u'ASC X12 Control Structure',
     ),
     ISALoop,
 )
+
+
+def parse_control_headers(x12_contents):
+    """Parse only the control headers of an X12 message.
+
+    This parses the three outer control headers of the given X12 message:
+
+    * Interchange Control (ISA)
+    * Functional Group (GS)
+    * Transaction Set (ST).
+
+    These can be used to identify the X12 versions and transaction set types
+    contained in the message.
+    """
+    return ControlParser.unmarshall(x12_contents, ignoreExtra=True)

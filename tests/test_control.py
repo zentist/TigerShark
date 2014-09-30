@@ -5,7 +5,7 @@ import unittest
 from tigershark.facade.control import ControlHeaders
 from tigershark.facade.control import VERSION_4010
 from tigershark.facade.control import VERSION_5010
-from tigershark.parsers import X12Parser
+from tigershark.parsers import parse_control_headers
 
 
 # Map (version tuple, transaction set identifier) to test file names.
@@ -35,7 +35,7 @@ class TestControlHeaders(unittest.TestCase):
 
     def parse_file(self, name):
         with open(os.path.join('tests', name)) as f:
-            parsed = X12Parser.unmarshall(f.read().strip(), ignoreExtra=True)
+            parsed = parse_control_headers(f.read().strip())
         return ControlHeaders(parsed)
 
     def test_5010_details(self):
