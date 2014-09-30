@@ -31,7 +31,7 @@ TEST_FILE_MAP = {
 }
 
 
-class TestIdentifyingHeaders(unittest.TestCase):
+class TestControlHeaders(unittest.TestCase):
 
     def parse_file(self, name):
         with open(os.path.join('tests', name)) as f:
