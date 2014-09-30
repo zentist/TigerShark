@@ -82,7 +82,6 @@ class Header(X12LoopBridge):
         payer_id = ElementAccess("TRN", 3)
         originating_company_supplemental_code = ElementAccess("TRN", 4)
 
-    # TODO tests
     class _CurrencyInformation(X12LoopBridge):
         """ Specify the currency and exchange rate, if applicable.
 
@@ -92,10 +91,11 @@ class Header(X12LoopBridge):
         currency_code = ElementAccess("CUR", 2)
         exchange_rate = ElementAccess("CUR", 3)
 
-    # TODO tests
     class _Receiver(X12LoopBridge):
         """ Used when the receiver of the transaction is not the payee. """
         id = ElementAccess("REF", 2, qualifier=(1, "EV"))
+        description = ElementAccess("REF", 3, qualifier=(1, "EV"))
+        reference_id = ElementAccess("REF", 4, qualifier=(1, "EV"))
 
     # TODO tests
     class _Version(X12LoopBridge):
@@ -106,6 +106,8 @@ class Header(X12LoopBridge):
         underlying EDI file. This is sometimes used for customer service
         requests, to help track down where an error was introduced."""
         version_number = ElementAccess("REF", 2, qualifier=(1, "F2"))
+        description = ElementAccess("REF", 3, qualifier=(1, "F2"))
+        reference_id = ElementAccess("REF", 4, qualifier=(1, "F2"))
 
     class _ProductionDate(X12LoopBridge):
         """ Production date of the claim.
@@ -434,10 +436,24 @@ class F835_4010(Facade):
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
-        if len(st_loops) > 0:
-            self.facades = []
-            for loop in st_loops:
-                self.facades.append(F835_4010(loop))
+        if st_loops:
+            self.facades = map(F835_4010, st_loops)
+        else:
+            self.header = first(self.loops(Header, anX12Message))
+            self.payer = first(self.loops(Payer, anX12Message))
+            self.payee = first(self.loops(Payee, anX12Message))
+            self.claims_overview = first(
+                self.loops(ClaimsOverview, anX12Message))
+            self.claims = self.loops(Claim, anX12Message)
+            self.footer = first(self.loops(Footer, anX12Message))
+
+
+class F835_5010(Facade):
+    def __init__(self, anX12Message):
+        """Examine the message and extract the relevant Loops."""
+        st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
+        if st_loops:
+            self.facades = map(F835_5010, st_loops)
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.payer = first(self.loops(Payer, anX12Message))
