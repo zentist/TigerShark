@@ -1,8 +1,12 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
-State of the Project
-====================
+Version 0.2.8
+-------------
+
+* Support for parsing 5010 270, 271, and 835 files.
+* Support for parsing any X12 file to get version and transaction set information.
+* Utility APIs for parsing any X12 file.
 
 Version 0.2.5
 -------------
