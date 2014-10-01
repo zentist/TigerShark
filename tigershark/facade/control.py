@@ -80,6 +80,7 @@ class FunctionalGroupHeader(X12LoopBridge):
                 version=int(self.version_indicator_code[0:3]),
                 release=int(self.version_indicator_code[3:5]),
                 subrelease=int(self.version_indicator_code[5:6]),
+                industry_identifier_code=self.version_indicator_code[6:],
             )
 
 
