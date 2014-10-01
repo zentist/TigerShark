@@ -955,7 +955,7 @@ class D8(Conversion):
 
     @staticmethod
     def python_to_x12(value):
-        return '' if value is None else value.strftime("%4Y%2m%2d")
+        return '' if value is None else value.strftime("%Y%m%d")
 
 
 class DR( Conversion ):
