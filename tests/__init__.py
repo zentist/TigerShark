@@ -48,7 +48,7 @@ TEST_FILE_MAP = {
     ('271', X12_4010_X092A1): '271-example.txt',
     ('271', X12_4010_X092A1): '271-related-entity.txt',
     ('276', X12_4010_X093A1): 'TEST 276 TXNs.txt',
-    ('278', X12_4010_X093A1): 'TEST 278_13 TXNS.txt',
+    ('278', X12_4010_X094A1): 'TEST 278_13 TXNS.txt',
     ('278', X12_4010_X094A1): 'TEST 278_28 TXNS_SOA.txt',
     ('835', X12_4010_X091A1): '835-example-2.txt',
     ('835', X12_4010_X091A1): '835-example.txt',
