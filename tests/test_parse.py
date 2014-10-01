@@ -25,8 +25,9 @@ logger = logging.getLogger(__name__)
 class TestGenericParsing(unittest.TestCase):
 
     def test_all_loadable(self):
-        for version_tuple, transaction_set_id in PARSER_MAP:
-            load_parser(version_tuple, transaction_set_id)
+        for transaction_set_id, version_map in PARSER_MAP.iteritems():
+            for version_tuple in version_map:
+                load_parser(transaction_set_id, version_tuple)
 
 
 class TestStructure(unittest.TestCase):
