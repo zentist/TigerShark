@@ -70,7 +70,7 @@ def get_parsers(transaction_set_id, version_tuple):
     try:
         parsers = PARSER_MAP[transaction_set_id][version_tuple]
     except KeyError:
-        raise ValueError("Unsupported transaction set.",
+        raise ValueError("Unsupported transaction set and version.",
                          transaction_set_id, version_tuple)
 
     for index, (module_name, parser_name) in enumerate(parsers):

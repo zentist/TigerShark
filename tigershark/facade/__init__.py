@@ -254,6 +254,40 @@ Exceptions
 import datetime
 from decimal import Decimal
 
+# Transaction Set ID -> X12 release number -> (facade module, facade name)
+FACADE_MAP = {
+    '270': {
+        4: ('f270', 'F270_4010'),
+        5: ('f270', 'F270_4010'),
+    },
+    '271': {
+        4: ('f271', 'F271_4010'),
+        5: ('f271', 'F271_4010'),
+    },
+    '835': {
+        4: ('f835', 'F835_4010'),
+        5: ('f835', 'F835_4010'),
+    },
+}
+
+
+def get_facade(transaction_set_id, version_tuple):
+    """
+    Return the facade to use for a given transaction set and version.
+
+    Raises ValueError if the transaction set and version are not supported.
+    """
+    try:
+        module_name, facade_name = (
+            FACADE_MAP[transaction_set_id][version_tuple.version])
+    except KeyError:
+        raise ValueError("Unsupported transaction set and version.",
+                         transaction_set_id, version_tuple)
+
+    module = __import__('tigershark.facade.' + module_name,
+                        fromlist=[facade_name])
+    return getattr(module, facade_name)
+
 
 class Facade(object):
 
