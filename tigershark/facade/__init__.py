@@ -2,9 +2,11 @@
 Facade Use Cases
 ================
 
-The :class:`X12LoopBridge` will associate a Python class with an X12 Loop definition.
-Each attribute of Python class is a **Descriptor** that references an X12 Element
-in  a Segment instance within the overall Loop.
+The :class:`X12LoopBridge` will associate a Python class with an
+X12 Loop definition.
+
+Each attribute of Python class is a **Descriptor** that references an
+X12 Element in a Segment instance within the overall Loop.
 
 It's a **Bridge** between a Python class and an X12 Loop.
 
@@ -22,36 +24,42 @@ attribute.
 The attribute Descriptor has several use cases, depending
 on the attribute's type and how that value is accessed from the X12 Segment.
 
-    -   Single simple value, identified by position within a Segment of the top-level Loop.
-        This is a direct reference to an Element, and is only appropriate when the
-        Segment doesn't repeat.
+    -   Single simple value, identified by position within a Segment of
+        the top-level Loop.
+        This is a direct reference to an Element, and is only appropriate when
+        the Segment doesn't repeat.
 
-    -   Single simple value, one of a number of alternative positions within a Segment.
-        This is a
-        direct reference to an Element, and is appropriate when the Segment
-        doesn't repeat.  The Element is one of a number of
+    -   Single simple value, one of a number of alternative positions within
+        a Segment.
+
+        This is a direct reference to an Element, and is appropriate when the
+        Segment doesn't repeat.  The Element is one of a number of
         candidates, which are defined by a sequence of
-        :samp:`(qualifier,value)` position tuples.  If the Element value in the qualifier
-        position is equal to a given qualifier value, the Element in the value
-        position is the desired Element. This is required to pick values out of
-        the :samp:`PER` segment.
+        :samp:`(qualifier,value)` position tuples. If the Element value in the
+        qualifier position is equal to a given qualifier value, the Element in
+        the value position is the desired Element. This is required to pick
+        values out of the :samp:`PER` segment.
 
-    -   Sequence of simple values, with the value identified a fixed position in multiple
-        occurrences of a Segment.  This is used for :samp:`NTE` segments.
+    -   Sequence of simple values, with the value identified a fixed position
+        in multiple occurrences of a Segment.  This is used for :samp:`NTE`
+        segments.
 
-    -   Single simple value, identified by a position in a Composite.  This is a direct reference
-        to a sub-element of a Composite.  This is used to pick apart the various
-        composites that occur in :samp:`HI` segments when a single value is required.
+    -   Single simple value, identified by a position in a Composite.
+        This is a direct reference to a sub-element of a Composite.  This is
+        used to pick apart the various composites that occur in :samp:`HI`
+        segments when a single value is required.
 
     -   Single complex value, identified by a Composite.
 
-    -   Sequence of simple values, with the value identified by a fixed position in
-        multiple occurrences of a Composite.  This is used to pick apart the various
-        composites that occur in :samp:`HI` segments when a sequence of values is required.
+    -   Sequence of simple values, with the value identified by a fixed
+        position in multiple occurrences of a Composite.  This is used to pick
+        apart the various composites that occur in :samp:`HI` segments when a
+        sequence of values is required.
 
     -   Sequence of complex values, with the value identified by a recurring
-        Segment.  This is used to define a nested object.  This is used to pick apart the :samp:`PWK`
-        Segments, which occur multiple times within the 2300 and 2400 loops.
+        Segment.  This is used to define a nested object.  This is used to pick
+        apart the :samp:`PWK` Segments, which occur multiple times within the
+        2300 and 2400 loops.
 
 XXX - Can Composite and Element be refactored to have a common superclass?
 Do all Composites have a type identifier in the initial position?
@@ -66,7 +74,8 @@ There are several dimensions to the above cases:
 
         -   Segment or Segments that match simple qualifications.
 
-        -   Composite or Composites that match simple Criteria, but are found in multiple Segments.
+        -   Composite or Composites that match simple Criteria, but are
+            found in multiple Segments.
 
     -   Element Selection:
 
@@ -74,14 +83,15 @@ There are several dimensions to the above cases:
             within a Segment.  This creates a sequence of strings values.
 
         -   Fixed position(s) within a Composite, Sequence of Positions
-            within a Composite (usually positions [1:]).  This creates a sequence
-            of string values.
+            within a Composite (usually positions [1:]).  This creates a
+            sequence of string values.
 
         -   The whole Segment.
 
-    -   Conversion: No conversion, single-element conversion, multi-element conversion.
-        At this point, we don't care whether the data was from a Composite or Segment
-        since it's now a sequence of strings.
+    -   Conversion: No conversion, single-element conversion, multi-element
+        conversion.
+        At this point, we don't care whether the data was from a Composite or
+        Segment since it's now a sequence of strings.
 
     -   Result Stucture: single occurance vs. the complete sequence.
 
@@ -91,23 +101,23 @@ There are several conversion protocols.
         No conversion is done.
 
     -   Single-element non-string value is done through a simple conversion
-        protocol.  A class with two static methods (x12_to_python and python_to_x12)
-        is used by the Descriptor to make the value usable.
+        protocol.  A class with two static methods (x12_to_python and
+        python_to_x12) is used by the Descriptor to make the value usable.
 
-    -   Multiple-element all-string values are can be handled as simple Python lists of
-        strings.
+    -   Multiple-element all-string values are can be handled as simple
+        Python lists of strings.
 
     -   Multiple-element, non-String values use the same basic conversion
-        protocol, starting from a list of strings instead of a single string Element
-        value.
+        protocol, starting from a list of strings instead of a single string
+        Element value.
 
 Facade Implementation
 ============================
 
-The :class:`X12LoopBridge` handles the high-level mapping between a Python class
-and an instance of an :class:`X12.message.X12Loop`. Each bridge has a few
-high-level methods, and a long sequence of attribute definitions. Each attribute
-is defined using an instance of the :class:`ElementAccess` class.
+The :class:`X12LoopBridge` handles the high-level mapping between a Python
+class and an instance of an :class:`X12.message.X12Loop`. Each bridge has a few
+high-level methods, and a long sequence of attribute definitions. Each
+attribute is defined using an instance of the :class:`ElementAccess` class.
 
 The :class:`ElementAccess` class is a **Lightweight** class that has parameters
 and a reference to the underlying :class:`X12.message.X12Loop` structure. It is
@@ -151,10 +161,11 @@ The element access get algorithm has the following steps:
 
         -   **Element Selection**. Accumulate the sequence of Element values.
             This is done by a :class:`CompositePosition` object.  There are two
-            composite positions algorithms: single value position and range of positions.
-            Package as a list of strings for step 5.
+            composite positions algorithms: single value position and range of
+            positions. Package as a list of strings for step 5.
 
-    5.  **Conversion**. Apply x12_to_python type conversion to sequences of Element values.
+    5.  **Conversion**. Apply x12_to_python type conversion to sequences of
+        Element values.
         Ths various :class:`Conversion` subclasses handle this.
 
     6.  **Result Structure**. Pick the first value or the whole list of values.
@@ -181,21 +192,22 @@ Element values are located by "position".  In the majority of cases, the
 position is a single, fixed position within a Segment.  The position can
 be defined numerically.
 
-When creating an :class:`ElementAccess` attribute definition, a numeric position
-is implicitly translated to an instance of :class:`Position`, the simplest kind
-of position definition.
+When creating an :class:`ElementAccess` attribute definition, a numeric
+position is implicitly translated to an instance of :class:`Position`, the
+simplest kind of position definition.
 
 There are several kinds of Position definitions.
 
     -   :class:`Position` defines a single, fixed Element position as the value
         for an attribute.
 
-    -   :class:`OneOf` is used to implement attributes of the :samp:`PER` Segment, which
-        are defined by a series of (qualifer,value) pairs.  The Element's position
-        isn't fixed, but is determined by examining a number of alterantives.
+    -   :class:`OneOf` is used to implement attributes of the :samp:`PER`
+        Segment, which are defined by a series of (qualifer,value) pairs.
+        The Element's position isn't fixed, but is determined by examining
+        a number of alternatives.
 
-    -   :class:`SequenceOf` is used to implement attributes which are a simple sequence
-        of values picked from the Elements of the Segment.
+    -   :class:`SequenceOf` is used to implement attributes which are a simple
+        sequence of values picked from the Elements of the Segment.
 
 ..  autoclass:: Position
 
@@ -213,8 +225,6 @@ fixed position within a Composite or a range of positions.
 
 ..  autoclass:: CompositeAccess
 
-# XXX - Refactor CompositeAccess and CompositeSequenceAccess to be much simpler.
-
 ..  autoclass:: CompositeSequenceAccess
 
 Conversion
@@ -224,8 +234,8 @@ Each data conversion is a static class definition with two methods:
 
     -   x12_to_python.  This method converts an X12 string or sequence
         of strings into a Python object.  The sequence of strings is used
-        to convert Composites as well as converting whole Segments into distinct
-        Python objects.
+        to convert Composites as well as converting whole Segments into
+        distinct Python objects.
 
     -   python_to_x12.  This method converts a Python object into an
         X12 string or a sequence of strings.
@@ -252,112 +262,136 @@ class Facade(object):
                 anX12Message.descendant("loop", theClass.loopName)]
 
 
-class MissingSegment( Exception ):
+class MissingSegment(Exception):
     """This exception is raised if the target Segment cannot be found
     within the Loop.
     """
 
 
-class X12LoopBridge( object ):
-    """Bridge between a user-focused class/attribute definition and an :class:`X12.message.X12Loop`.
+class X12LoopBridge(object):
+    """Bridge between a model definition and an :class:`X12.message.X12Loop`.
 
     This wrapper implements a simple search for Segments within a Loop.
     It leverates the essential XPath like "descendant" search capability,
     and either returns a sequence of Segments or a single Segment which matches
     certain qualifying criteria.
 
-    This is an abstract superclass definition.  A subclass will contain a number
-    of attributes, defined using the :class:`ElementAccess` class or any of its
-    subclasses.
+    This is an abstract superclass definition.  A subclass will contain a
+    number of attributes, defined using the :class:`ElementAccess` class or any
+    of its subclasses.
     """
-    def __init__( self, aLoop ):
+    def __init__(self, aLoop):
         """Named loop within a specific message.
-        
+
         :param aLoop: the loop identifier to pick out of the X12Message.
         """
-        self.loop= aLoop
-    def __str__( self ):
+        self.loop = aLoop
+
+    def __str__(self):
         return str(self.loop)
-    def _filteredList( self, name, qualifierPos=None, inList=None, notInList=None ):
+
+    def _filteredList(self, name, qualifierPos=None,
+                      inList=None, notInList=None):
         """Return all matching X12Segments that are children of the X12Loop.
+
         Do not check descendants, only check immediate children.
         If no qualifier, then all segments with the given name are returned.
-        If a qualifier position is provided, then the element at that position in the
-        segment is checked for a value in the :meth:`inList` or not in the :meth:`notInList`
-        values.
-        
+        If a qualifier position is provided, then the element at that position
+        in the segment is checked for a value in the :meth:`inList` or not in
+        the :meth:`notInList` values.
+
         :param name: name of the segment
         :param qualifierPos: optional qualifier position in the Segment.
-        if omitted, all matching segments are returned.
-        :param inList: optional qualification values.  Only used if the qualiferPosition
-        is provided.  This the positive list of values segments must have.
-        :param notInList: optional qualification values.  Only used if the qualiferPosition
-        is provided.  This the negatuve list of values segments must not have.
-        :returns: list of all :class:`X12.message.X12Segment` instances within this Loop.
+            if omitted, all matching segments are returned.
+        :param inList: optional qualification values.  Only used if the
+            qualiferPosition is provided.  This the positive list of values
+            segments must have.
+        :param notInList: optional qualification values.  Only used if the
+           qualiferPosition is provided.  This the negatuve list of values
+           segments must not have.
+        :returns: list of all :class:`X12.message.X12Segment` instances
+            within this Loop.
         """
-        segList= [ s for s in self.loop.child( "segment", name ) ]
+        segList = [s for s in self.loop.child("segment", name)]
         if qualifierPos:
             if inList:
-                filtered= [ seg for seg in segList if seg.getByPos(qualifierPos) in inList ]
+                filtered = [seg for seg in segList
+                            if seg.getByPos(qualifierPos) in inList]
             elif notInList:
-                filtered= [ seg for seg in segList if seg.getByPos(qualifierPos) not in notInList ]
+                filtered = [seg for seg in segList
+                            if seg.getByPos(qualifierPos) not in notInList]
             else:
-                raise TypeError( "QualifierPos requires inList or notInList")
+                raise TypeError("QualifierPos requires inList or notInList")
         else:
-            filtered= segList
+            filtered = segList
         return filtered
-    def segList( self, name, qualifierPos=None, inList=None, notInList=None ):
+
+    def segList(self, name, qualifierPos=None, inList=None, notInList=None):
         """Return a all matching X12Segments of the X12Loop.
         If no qualifier, then all segments with the given name are returned.
-        If a qualifier position is provided, then the element at that position in the
-        segment is checked for a value in the :meth:`inList` or not in the :meth:`notInList`
-        values.
-        
+        If a qualifier position is provided, then the element at that position
+        in the segment is checked for a value in the :meth:`inList` or not in
+        the :meth:`notInList` values.
+
         :param name: name of the segment
         :param qualifierPos: optional qualifier position in the Segment.
         if omitted, all matching segments are returned.
-        :param inList: optional qualification values.  Only used if the qualiferPosition
-        is provided.  This the positive list of values segments must have.
-        :param notInList: optional qualification values.  Only used if the qualiferPosition
-        is provided.  This the negatuve list of values segments must not have.
-        :returns: list of all :class:`X12.message.X12Segment` instances within this Loop.
+        :param inList: optional qualification values.  Only used if the
+            qualiferPosition is provided.  This the positive list of values
+            segments must have.
+        :param notInList: optional qualification values.  Only used if the
+            qualiferPosition is provided.  This the negative list of values
+            segments must not have.
+        :returns: list of all :class:`X12.message.X12Segment` instances
+            within this Loop.
         """
-        return [ X12SegmentBridge(s) for s in self._filteredList(name,qualifierPos,inList,notInList) ]
-    def segment( self, name, qualifierPosition=None, inList=None, notInList=None ):
+        return [X12SegmentBridge(s)
+                for s in self._filteredList(
+                    name, qualifierPos, inList, notInList)]
+
+    def segment(self, name, qualifierPosition=None,
+                inList=None, notInList=None):
         """Return a specific X12Segment of the X12Loop.
-        If no qualifier, then the first segment with the given name is returned.
+        If no qualifier, then the first segment with the given name
+        is returned.
         If there's one instance of a segment within a loop, this default
         picks the only instance.
-        If a qualifier position is provided, then the element at that position in the
-        segment is checked for a value in the list of values.
-        
+        If a qualifier position is provided, then the element at that
+        position in the segment is checked for a value in the list of values.
+
         :param name: name of the segment
         :param qualifierPosition: optional qualification position.
         if omitted, the first matching segment is returned.
-        :param inList: optional qualification values.  Only used if the qualifier
-        is provided to specify the position to check.
-        :param notInList: optional negative list of values to exclude from qualification.
-        Only used if the qualifier
-        is provided to specify the position to check.
+        :param inList: optional qualification values.  Only used if the
+            qualifier is provided to specify the position to check.
+        :param notInList: optional negative list of values to exclude from
+            qualification. Only used if the qualifier is provided to specify
+            the position to check.
         :returns: :class:`X12.message.X12Segment` instance within this Loop.
         """
-        matches= self._filteredList(name,qualifierPosition,inList,notInList)
-        if len(matches) == 0: return None
-        return X12SegmentBridge( matches[0] )
+        matches = self._filteredList(
+            name, qualifierPosition, inList, notInList)
+        if len(matches) == 0:
+            return None
+        return X12SegmentBridge(matches[0])
 
-class X12SegmentBridge( object ):
-    """Bridge between a user-focused class/attribute definition and an :class:`X12.message.X12Segment`.
 
-    This is a simple wrapper around an X12Segment which can be used to locate Composites
-    within the Segment or locate Elements within the Segment.
+class X12SegmentBridge(object):
+    """Bridge between a model and an :class:`X12.message.X12Segment`.
+
+    This is a simple wrapper around an X12Segment which can be used
+    to locate Composites within the Segment or locate Elements within
+    the Segment.
 
     XXX - This is only really necessary when extracting Composites.
     Consider not using X12SegmentBridge for ordinary ElementAccess processing.
     """
-    def __init__(self, aSegment ):
-        self.segment= aSegment
-    def __str__( self ):
-        return str( self.segment )
+    def __init__(self, aSegment):
+        self.segment = aSegment
+
+    def __str__(self):
+        return str(self.segment)
+
     def compositeList( self, *names ):
         sep= self.segment.message.getCompositeSeparator()
         result= []
