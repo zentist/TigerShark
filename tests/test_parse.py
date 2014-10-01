@@ -1,7 +1,8 @@
 import unittest
 import logging
-import sys
 
+from tigershark.parsers import PARSER_MAP
+from tigershark.parsers import load_parser
 from tigershark.X12.parse import Message
 from tigershark.X12.parse import Loop
 from tigershark.X12.parse import Segment
@@ -13,12 +14,19 @@ from tigershark.X12.map.source import FlatPythonVisitor
 from tigershark.X12.map.SQL import SQLTableVisitor
 from tigershark.X12.map.dj import DjangoModelVisitor
 
-logger = logging.getLogger(__name__)
-
 # THE MANUALLY-BUILT PARSER:
 from tests.example_278 import parse_278
 from tests.example_278 import loop2000F
 from tests.example_278 import loop2000A
+
+logger = logging.getLogger(__name__)
+
+
+class TestGenericParsing(unittest.TestCase):
+
+    def test_all_loadable(self):
+        for version_tuple, transaction_set_id in PARSER_MAP:
+            load_parser(version_tuple, transaction_set_id)
 
 
 class TestStructure(unittest.TestCase):
@@ -268,10 +276,3 @@ admin.site.register( SE )
         sLines = sample.splitlines()
         for i in range(len(sLines)):
             self.assertEqual(tLines[i].rstrip(), sLines[i].rstrip())
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        stream=sys.stderr,
-        level=logging.DEBUG,
-    )
-    unittest.main()

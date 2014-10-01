@@ -12,7 +12,7 @@ from tigershark.facade.control import ControlHeaders
 from tigershark.parsers import parse_control_headers
 
 
-# Map (version tuple, transaction set identifier) to test file names.
+# Map (X12VersionTuple, Transaction Set Identifier) to test file names.
 TEST_FILE_MAP = {
     (X12_4010_X092A1, '271'): '271-dependent-benefits.txt',
     (X12_4010_X092A1, '271'): '271-example-2.txt',
@@ -87,6 +87,7 @@ class TestControlHeaders(unittest.TestCase):
         self.assertEqual(group.version_indicator_code, '005010X221A1')
 
         self.assertTrue(group.version_tuple.is_5010)
+        self.assertEqual(group.version_tuple, X12_5010_X221A1)
 
     def test_4010_details(self):
         facade = self.parse_file('271-example.txt')
@@ -133,6 +134,7 @@ class TestControlHeaders(unittest.TestCase):
         self.assertEqual(group.version_indicator_code, '004010X092A1')
 
         self.assertTrue(group.version_tuple.is_4010)
+        self.assertEqual(group.version_tuple, X12_4010_X092A1)
 
     def test_all_parseable(self):
         all_tests = sorted(TEST_FILE_MAP.iteritems())
