@@ -2,32 +2,32 @@ import datetime
 import os
 import unittest
 
+from tigershark import X12_VERSION_4010
+from tigershark import X12_VERSION_5010
 from tigershark.facade.control import ControlHeaders
-from tigershark.facade.control import VERSION_4010
-from tigershark.facade.control import VERSION_5010
 from tigershark.parsers import parse_control_headers
 
 
 # Map (version tuple, transaction set identifier) to test file names.
 TEST_FILE_MAP = {
-    (VERSION_4010, '271'): '271-dependent-benefits.txt',
-    (VERSION_4010, '271'): '271-example-2.txt',
-    (VERSION_4010, '271'): '271-example-dependent-rejection.txt',
-    (VERSION_4010, '271'): '271-example.txt',
-    (VERSION_4010, '271'): '271-related-entity.txt',
-    (VERSION_4010, '276'): 'TEST 276 TXNs.txt',
-    (VERSION_4010, '278'): 'TEST 278_13 TXNS.txt',
-    (VERSION_4010, '278'): 'TEST 278_28 TXNS_SOA.txt',
-    (VERSION_4010, '835'): '835-example-2.txt',
-    (VERSION_4010, '835'): '835-example.txt',
-    (VERSION_4010, '837'): '837-example.txt',
-    (VERSION_4010, '837'): '837I-Examples.txt',
-    (VERSION_4010, '837'): '837I-Patient-NotSubscriber.txt',
-    (VERSION_4010, '837'): '837I-Patient-NotSubscriber2.txt',
-    (VERSION_4010, '837'): '837I-Patient-Subscriber.txt',
-    (VERSION_5010, '835'): '5010-835-example-1.txt',
-    (VERSION_5010, '835'): '5010-835-example-2.txt',
-    (VERSION_5010, '835'): '5010-835-example-3.txt',
+    (X12_VERSION_4010, '271'): '271-dependent-benefits.txt',
+    (X12_VERSION_4010, '271'): '271-example-2.txt',
+    (X12_VERSION_4010, '271'): '271-example-dependent-rejection.txt',
+    (X12_VERSION_4010, '271'): '271-example.txt',
+    (X12_VERSION_4010, '271'): '271-related-entity.txt',
+    (X12_VERSION_4010, '276'): 'TEST 276 TXNs.txt',
+    (X12_VERSION_4010, '278'): 'TEST 278_13 TXNS.txt',
+    (X12_VERSION_4010, '278'): 'TEST 278_28 TXNS_SOA.txt',
+    (X12_VERSION_4010, '835'): '835-example-2.txt',
+    (X12_VERSION_4010, '835'): '835-example.txt',
+    (X12_VERSION_4010, '837'): '837-example.txt',
+    (X12_VERSION_4010, '837'): '837I-Examples.txt',
+    (X12_VERSION_4010, '837'): '837I-Patient-NotSubscriber.txt',
+    (X12_VERSION_4010, '837'): '837I-Patient-NotSubscriber2.txt',
+    (X12_VERSION_4010, '837'): '837I-Patient-Subscriber.txt',
+    (X12_VERSION_5010, '835'): '5010-835-example-1.txt',
+    (X12_VERSION_5010, '835'): '5010-835-example-2.txt',
+    (X12_VERSION_5010, '835'): '5010-835-example-3.txt',
 }
 
 
@@ -82,7 +82,7 @@ class TestControlHeaders(unittest.TestCase):
 
         self.assertEqual(group.version_indicator_code, '005010X221A1')
 
-        self.assertEqual(group.version_tuple, VERSION_5010)
+        self.assertEqual(group.version_tuple, X12_VERSION_5010)
 
     def test_4010_details(self):
         facade = self.parse_file('271-example.txt')
@@ -128,7 +128,7 @@ class TestControlHeaders(unittest.TestCase):
 
         self.assertEqual(group.version_indicator_code, '004010X092A1')
 
-        self.assertEqual(group.version_tuple, VERSION_4010)
+        self.assertEqual(group.version_tuple, X12_VERSION_4010)
 
     def test_all_parseable(self):
         all_tests = TEST_FILE_MAP.iteritems()

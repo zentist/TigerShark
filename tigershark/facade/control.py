@@ -1,16 +1,9 @@
-from collections import namedtuple
-
+from tigershark import X12VersionTuple
 from tigershark.facade import D8
 from tigershark.facade import ElementAccess
 from tigershark.facade import Facade
 from tigershark.facade import TM
 from tigershark.facade import X12LoopBridge
-
-
-VersionTuple = namedtuple('VersionTuple', ('version', 'release', 'subrelease'))
-
-VERSION_4010 = VersionTuple(4, 1, 0)
-VERSION_5010 = VersionTuple(5, 1, 0)
 
 
 class ControlHeaders(Facade):
@@ -83,7 +76,7 @@ class FunctionalGroupHeader(X12LoopBridge):
         Returns None if no version is given or has a different format.
         """
         if self.responsible_agency_code == 'X':
-            return VersionTuple(
+            return X12VersionTuple(
                 version=int(self.version_indicator_code[0:3]),
                 release=int(self.version_indicator_code[3:5]),
                 subrelease=int(self.version_indicator_code[5:6]),
