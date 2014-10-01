@@ -941,7 +941,7 @@ class TM(Conversion):
 class D8(Conversion):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
-    def x12_to_python( raw ):
+    def x12_to_python(raw):
         if raw is None:
             return raw
 
@@ -958,24 +958,29 @@ class D8(Conversion):
         return '' if value is None else value.strftime("%Y%m%d")
 
 
-class DR( Conversion ):
+class DR(Conversion):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
-    def x12_to_python( raw ):
+    def x12_to_python(raw):
         if raw is None or raw == "":
             return None
+
         d1, punct, d2 = raw.partition('-')
+
         if d1 is None or d2 is None or d1 == "" or d2 == "":
             return None
+
         yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
         yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
-        return datetime.date( yy1,mm1,dd1 ), datetime.date( yy2,mm2,dd2 )
+
+        return datetime.date(yy1, mm1, dd1), datetime.date(yy2, mm2, dd2)
+
     @staticmethod
-    def python_to_x12( value ):
+    def python_to_x12(value):
         if value is None:
             return ""
         d1, d2 = value
-        return "%s-%s" % ( d1.strftime( "%4Y%2m%2d" ), d2.strftime( "%4Y%2m%2d" ) )
+        return "%s-%s" % (d1.strftime( "4Y%m%d"), d2.strftime("%Y%m%d"))
 
 
 class SegmentConversion( Conversion ):
