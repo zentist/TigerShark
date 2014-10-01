@@ -67,7 +67,8 @@ def get_parser(transaction_set_id, version_tuple):
         module_name, parser_name = (
             PARSER_MAP[transaction_set_id][version_tuple])
     except KeyError:
-        raise ValueError()
+        raise ValueError("Unsupported transaction set.",
+                         transaction_set_id, version_tuple)
     else:
         module = __import__('tigershark.parsers.' + module_name,
                             fromlist=[parser_name])

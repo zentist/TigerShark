@@ -113,12 +113,12 @@ class TestControlHeaders(unittest.TestCase):
 
     def test_all_parseable(self):
         all_tests = sorted(TEST_FILE_MAP.iteritems())
-        for (version_tuple, transaction_set_identifier_code), name in all_tests:  # nopep8
+        for (transaction_set_id, version_tuple), name in all_tests:
             facade = self.parse_file(name)
             control = facade.interchange_controls[0]
             group = control.functional_groups[0]
             self.assertEqual(group.version_tuple, version_tuple)
             transaction_set = group.transaction_sets[0]
             self.assertEqual(transaction_set.transaction_set_identifier_code,
-                             transaction_set_identifier_code)
+                             transaction_set_id)
             self.assertIs(transaction_set.functional_group, group)

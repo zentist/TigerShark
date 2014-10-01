@@ -47,7 +47,6 @@ class X12VersionTuple(_X12VersionTuple):
             and self.subrelease == 0
         )
 
-X12_4010_X059 = X12VersionTuple.for_4010('X059')
 X12_4010_X061A1 = X12VersionTuple.for_4010('X061A1')
 X12_4010_X070 = X12VersionTuple.for_4010('X070')
 X12_4010_X091A1 = X12VersionTuple.for_4010('X091A1')
