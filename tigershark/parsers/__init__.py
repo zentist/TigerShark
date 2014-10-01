@@ -80,7 +80,9 @@ def get_parsers(transaction_set_id, version_tuple):
 
 
 class SimpleParser(object):
-
+    """
+    A parser for a particular transaction set and version.
+    """
     def __init__(self, transaction_set_id, version_tuple):
         self.transaction_set_id = transaction_set_id
         self.version_tuple = version_tuple
