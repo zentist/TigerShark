@@ -672,13 +672,12 @@ class Segment( Parser ):
         """
         if isinstance(self.repeat, int):
             length_loop = xrange(self.repeat)
-            required_loop = repeat(self.required)
         elif self.repeat.startswith(">"):
             length_loop = count()
-            required_loop = chain([self.required], repeat(False))
         else:
             length_loop = xrange(int(self.repeat) if self.repeat.isdigit() else 1)
-            required_loop = repeat(self.required)
+
+        required_loop = chain([self.required], repeat(False))
 
         for required, _ in izip(required_loop, length_loop):
             if self.match( segments[0] ):

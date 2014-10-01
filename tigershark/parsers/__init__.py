@@ -59,29 +59,19 @@ PARSER_MAP = {
 }
 
 
-def load_parser(transaction_set_id, version_tuple):
+def get_parser(transaction_set_id, version_tuple):
     """
-    Load a parser from the version tuple and transaction set ID.
+    Return a parser for the given transaction_set and version.
     """
-    module_name, parser_name = PARSER_MAP[transaction_set_id][version_tuple]
-    module = __import__('tigershark.parsers.' + module_name,
-                        fromlist=[parser_name])
-    return getattr(module, parser_name)
-
-
-def parse_simple_x12(x12_contents, version_tuple, transaction_set_id):
-    """
-    Parse an X12 file with the best available parser.
-    """
-    transaction_set_parsers = PARSER_MAP.get(transaction_set_id)
-
-    if not transaction_set_parsers:
-        raise ValueError('Unsupported transaction set.', transaction_set_id)
-
-    parser = PARSER_MAP.get(version_tuple)
-
-    if parser:
-        return parser.unmarshall(x12_contents)
+    try:
+        module_name, parser_name = (
+            PARSER_MAP[transaction_set_id][version_tuple])
+    except KeyError:
+        raise ValueError()
+    else:
+        module = __import__('tigershark.parsers.' + module_name,
+                            fromlist=[parser_name])
+        return getattr(module, parser_name)
 
 
 STLoop = Loop(

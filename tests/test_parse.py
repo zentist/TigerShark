@@ -1,23 +1,25 @@
-import unittest
 import logging
+import os
+import unittest
 
-from tigershark.parsers import PARSER_MAP
-from tigershark.parsers import load_parser
-from tigershark.X12.parse import Message
-from tigershark.X12.parse import Loop
-from tigershark.X12.parse import Segment
-from tigershark.X12.parse import Element
-from tigershark.X12.parse import Properties
-from tigershark.X12.parse import StructureError
-from tigershark.X12.map.source import PythonVisitor
-from tigershark.X12.map.source import FlatPythonVisitor
 from tigershark.X12.map.SQL import SQLTableVisitor
 from tigershark.X12.map.dj import DjangoModelVisitor
+from tigershark.X12.map.source import FlatPythonVisitor
+from tigershark.X12.map.source import PythonVisitor
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Loop
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Properties
+from tigershark.X12.parse import Segment
+from tigershark.X12.parse import StructureError
+from tigershark.parsers import PARSER_MAP
+from tigershark.parsers import get_parser
 
-# THE MANUALLY-BUILT PARSER:
-from tests.example_278 import parse_278
-from tests.example_278 import loop2000F
+from tests import TEST_FILE_MAP
 from tests.example_278 import loop2000A
+from tests.example_278 import loop2000F
+from tests.example_278 import parse_278
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +29,14 @@ class TestGenericParsing(unittest.TestCase):
     def test_all_loadable(self):
         for transaction_set_id, version_map in PARSER_MAP.iteritems():
             for version_tuple in version_map:
-                load_parser(transaction_set_id, version_tuple)
+                get_parser(transaction_set_id, version_tuple)
+
+    def test_all_parseable(self):
+        for (version_tuple, transaction_set_id), name in TEST_FILE_MAP.iteritems():  # nopep8
+            with open(os.path.join('tests', name)) as f:
+                contents = f.read()
+            parser = get_parser(transaction_set_id, version_tuple)
+            parser.unmarshall(contents)
 
 
 class TestStructure(unittest.TestCase):
