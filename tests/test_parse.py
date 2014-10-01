@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-from __future__ import print_function
 import unittest
 import logging
 import sys
@@ -66,7 +64,7 @@ class TestParse278_13(unittest.TestCase):
     """Test the hand-build 278 parser."""
     def setUp(self):
         # a 278-13 response
-        self.msg1 = """ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""
+        self.msg1 = """ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""  # nopep8
 
     def testTokenize(self):
         _, _, _, tokens = parse_278.tokenize(self.msg1)
@@ -92,36 +90,12 @@ class TestParse278_13(unittest.TestCase):
 
 class TestVisitor1(unittest.TestCase):
     """Test the generic visitor."""
-    def testPythonVisitor(self):
+    def test_PythonVisitor(self):
         python = PythonVisitor("parse_278")
         parse_278.visit(python)
         text = python.getSource()
-        sample = """from tigershark.X12.parse import Message, Loop, Segment, Composite, Element, Properties
-parse_278 = Message( '278', Properties(desc='HIPAA Health Care Services Review: Request X094A1-278'),
-  Loop( 'ISA', Properties(req_sit='R',repeat='1',desc='ISA'),
-    Segment( 'ISA', Properties(),
-    ),
-    Loop( 'GS', Properties(req_sit='R',repeat='1',desc='GS'),
-      Segment( 'GS', Properties(),
-      ),
-      Loop( 'ST', Properties(req_sit='R',repeat='1',desc='ST'),
-        Segment( 'ST', Properties(qual=(1, '278'),req_sit='R',repeat='1',desc='Transaction Set Header'),
-          Element( 'ST01', Properties(desc=None, req_sit=None, data_type=(None,None,None), position=1,
-            codes=['278'] ) ),
-        ),
-        Segment( 'BHT', Properties(req_sit='R',repeat='1',desc='Beginning of Hierarchical Transaction'),
-        ),
-        Loop( '2000A', Properties(req_sit='R',repeat='1',desc='2000A'),
-          Segment( 'HL', Properties(qual=(3, '20'),req_sit='R',repeat='1',desc='Utilization Management Organization (UMO) Level'),
-            Element( 'HL03', Properties(desc=None, req_sit=None, data_type=(None,None,None), position=3,
-              codes=['20'] ) ),
-          ),
-          Loop( '2010A', Properties(req_sit='R',repeat='>1',desc='2010A'),
-            Segment( 'NM1', Properties(qual=(1, 'X3'),req_sit='R',repeat='1',desc='Utilization Management Organization (UMO) Name'),
-              Element( 'NM101', Properties(desc=None, req_sit=None, data_type=(None,None,None), position=1,
-                codes=['X3'] ) ),
-            ),
-          ),"""
+        with open('tests/278-sample.txt') as f:
+            sample = f.read()
         tLines = text.splitlines()
         sLines = sample.splitlines()
         for i in range(len(sLines)):
@@ -134,7 +108,7 @@ class TestPythonVisitor(unittest.TestCase):
     Does it actually parse the message?"""
     def setUp(self):
         # a 278-13 response
-        self.msg1 = """ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""
+        self.msg1 = """ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""  # nopep8
 
     def testPythonVisitorCompile(self):
         python = FlatPythonVisitor("parse_278")

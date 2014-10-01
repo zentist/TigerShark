@@ -670,7 +670,10 @@ class Segment( Parser ):
         :param segments: list of SegmentTokens for the current message.
         :returns: yields a single parsed Segment or raises StopIteration
         """
-        if self.repeat.startswith(">"):
+        if isinstance(self.repeat, int):
+            length_loop = xrange(self.repeat)
+            required_loop = repeat(self.required)
+        elif self.repeat.startswith(">"):
             length_loop = count()
             required_loop = chain([self.required], repeat(False))
         else:
