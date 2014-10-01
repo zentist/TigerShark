@@ -13,7 +13,8 @@ from tigershark.X12.parse import Properties
 from tigershark.X12.parse import Segment
 from tigershark.X12.parse import StructureError
 from tigershark.parsers import PARSER_MAP
-from tigershark.parsers import get_parser
+from tigershark.parsers import get_parsers
+from tigershark.parsers import SimpleParser
 
 from tests import TEST_FILE_MAP
 from tests.example_278 import loop2000A
@@ -27,15 +28,15 @@ logger = logging.getLogger(__name__)
 class TestGenericParsing(unittest.TestCase):
 
     def test_all_loadable(self):
-        for transaction_set_id, version_map in PARSER_MAP.iteritems():
-            for version_tuple in version_map:
-                get_parser(transaction_set_id, version_tuple)
+        for transaction_set_id in PARSER_MAP:
+            for version_tuple in PARSER_MAP[transaction_set_id]:
+                list(get_parsers(transaction_set_id, version_tuple))
 
     def test_all_parseable(self):
         for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.iteritems():  # nopep8
             with open(os.path.join('tests', name)) as f:
-                contents = f.read()
-            parser = get_parser(transaction_set_id, version_tuple)
+                contents = f.read().replace('\n', '')
+            parser = SimpleParser(transaction_set_id, version_tuple)
             parser.unmarshall(contents)
 
 

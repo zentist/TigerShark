@@ -14,65 +14,86 @@ from tigershark import X12_5010_X279A1
 from tigershark.extras import standardSegment
 from tigershark.X12.parse import Loop
 from tigershark.X12.parse import Message
+from tigershark.X12.parse import ParseError
 from tigershark.X12.parse import Properties
 
-# Transaction Set ID -> X12VersionTuple -> (parser module, parser name)
+# Transaction Set ID -> X12VersionTuple -> [(parser module, parser name)]
 PARSER_MAP = {
     '270': {
-        X12_4010_X092A1: ('M270_4010_X092_A1', 'parsed_270'),
-        X12_5010_X279A1: ('M270_5010_X279_A1', 'parsed_270'),
+        X12_4010_X092A1: [('M270_4010_X092_A1', 'parsed_270')],
+        X12_5010_X279A1: [('M270_5010_X279_A1', 'parsed_270')],
     },
     '271': {
-        X12_4010_X092A1: ('M271_4010_X092_A1', 'parsed_271'),
-        X12_5010_X279A1: ('M271_5010_X279_A1', 'parsed_271'),
+        X12_4010_X092A1: [('M271_4010_X092_A1', 'parsed_271')],
+        X12_5010_X279A1: [('M271_5010_X279_A1', 'parsed_271')],
     },
     '276': {
-        X12_4010_X093A1: ('M276_4010_X093_A1', 'parsed_276'),
+        X12_4010_X093A1: [('M276_4010_X093_A1', 'parsed_276')],
     },
     '277U': {
-        X12_4010_X070: ('M277U_4010_X070', 'parsed_277U'),
+        X12_4010_X070: [('M277U_4010_X070', 'parsed_277U')],
     },
     '277': {
-        X12_4010_X093A1: ('M277_4010_X093_A1', 'parsed_277'),
+        X12_4010_X093A1: [('M277_4010_X093_A1', 'parsed_277')],
     },
     '278': {
-        X12_4010_X094A1: ('M278_4010_X094_27_A1', 'parsed_278'),
+        X12_4010_X094A1: [('M278_4010_X094_27_A1', 'parsed_278'),
+                          ('M278_4010_X094_A1', 'parsed_278')],
     },
     '820': {
-        X12_4010_X061A1: ('M820_4010_X061_A1', 'parsed_820'),
+        X12_4010_X061A1: [('M820_4010_X061_A1', 'parsed_820')],
     },
     '834': {
-        X12_4010_X095A1: ('M834_4010_X095_A1', 'parsed_834'),
+        X12_4010_X095A1: [('M834_4010_X095_A1', 'parsed_834')],
     },
     '835': {
-        X12_4010_X091A1: ('M835_4010_X091_A1', 'parsed_835'),
-        X12_5010_X221A1: ('M835_5010_X221_A1', 'parsed_835'),
+        X12_4010_X091A1: [('M835_4010_X091_A1', 'parsed_835')],
+        X12_5010_X221A1: [('M835_5010_X221_A1', 'parsed_835')],
     },
     '837': {
-        X12_4010_X096A1: ('M837_4010_X096_A1', 'parsed_837'),
-        X12_4010_X097A1: ('M837_4010_X097_A1', 'parsed_837'),
-        X12_4010_X098A1: ('M837_4010_X098_A1', 'parsed_837'),
+        X12_4010_X096A1: [('M837_4010_X096_A1', 'parsed_837')],
+        X12_4010_X097A1: [('M837_4010_X097_A1', 'parsed_837')],
+        X12_4010_X098A1: [('M837_4010_X098_A1', 'parsed_837')],
     },
     '841': {
-        X12_4010_XXXC: ('M841_4010_XXXC', 'parsed_841'),
+        X12_4010_XXXC: [('M841_4010_XXXC', 'parsed_841')],
     },
 }
 
 
-def get_parser(transaction_set_id, version_tuple):
+def get_parsers(transaction_set_id, version_tuple):
     """
-    Return a parser for the given transaction_set and version.
+    Generate the parsers to try for a given transaction_set and version.
+
+    The parsers should be tried in the given order.
     """
     try:
-        module_name, parser_name = (
-            PARSER_MAP[transaction_set_id][version_tuple])
+        parsers = PARSER_MAP[transaction_set_id][version_tuple]
     except KeyError:
         raise ValueError("Unsupported transaction set.",
                          transaction_set_id, version_tuple)
-    else:
+
+    for index, (module_name, parser_name) in enumerate(parsers):
         module = __import__('tigershark.parsers.' + module_name,
                             fromlist=[parser_name])
-        return getattr(module, parser_name)
+        yield getattr(module, parser_name)
+
+
+class SimpleParser(object):
+
+    def __init__(self, transaction_set_id, version_tuple):
+        self.transaction_set_id = transaction_set_id
+        self.version_tuple = version_tuple
+
+    def unmarshall(self, x12_contents, **kwargs):
+        for parser in get_parsers(self.transaction_set_id, self.version_tuple):
+            try:
+                return parser.unmarshall(x12_contents, **kwargs)
+            except ParseError:
+                continue
+        else:
+            # Let the last parser raise.
+            return parser.unmarshall(x12_contents, **kwargs)
 
 
 STLoop = Loop(
