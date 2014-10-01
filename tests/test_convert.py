@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Test :mod:`tools.convertPyX12`.
 
 Each TestCase is reasonably similar to the following.
@@ -81,10 +80,3 @@ class TestConvertPyx12(unittest.TestCase):
             logger.exception( stmt )
             raise
         db.close()
-
-if __name__ == '__main__':
-    logging.basicConfig(
-        stream=sys.stderr,
-        level=logging.DEBUG,
-    )
-    unittest.main()
