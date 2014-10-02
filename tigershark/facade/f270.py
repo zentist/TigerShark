@@ -218,6 +218,10 @@ class Dependent(Facade, X12LoopBridge):
 
 
 class F270_4010(Facade):
+
+    transaction_set_identifier_code = '270'
+    x12_version_string = '4010'
+
     def __init__(self, anX12Message):
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
         if len(st_loops) > 0:
@@ -230,6 +234,10 @@ class F270_4010(Facade):
 
 
 class F270_5010(Facade):
+
+    transaction_set_identifier_code = '270'
+    x12_version_string = '5010'
+
     def __init__(self, anX12Message):
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
         if len(st_loops) > 0:

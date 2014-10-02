@@ -433,6 +433,10 @@ class Claim(Facade, X12LoopBridge):
 
 
 class F835_4010(Facade):
+
+    transaction_set_identifier_code = '835'
+    x12_version_string = '4010'
+
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
@@ -449,6 +453,10 @@ class F835_4010(Facade):
 
 
 class F835_5010(Facade):
+
+    transaction_set_identifier_code = '835'
+    x12_version_string = '5010'
+
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')

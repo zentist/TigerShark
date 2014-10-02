@@ -47,6 +47,11 @@ class X12VersionTuple(_X12VersionTuple):
             and self.subrelease == 0
         )
 
+    @property
+    def short_string(self):
+        return '{}{:02}{}'.format(self.version, self.release, self.subrelease)
+
+
 X12_4010_X061A1 = X12VersionTuple.for_4010('X061A1')
 X12_4010_X070 = X12VersionTuple.for_4010('X070')
 X12_4010_X091A1 = X12VersionTuple.for_4010('X091A1')

@@ -26,6 +26,12 @@ class TestGenericParsing(unittest.TestCase):
 
             with open(os.path.join('tests', name)) as f:
                 contents = f.read().replace('\n', '')
+
             parser = SimpleParser(transaction_set_id, version_tuple)
             x12 = parser.unmarshall(contents)
-            get_facade(transaction_set_id, version_tuple)(x12)
+            facade = get_facade(transaction_set_id, version_tuple)(x12)
+
+            self.assertEqual(facade.x12_version_string,
+                             version_tuple.short_string)
+            self.assertEqual(facade.transaction_set_identifier_code,
+                             transaction_set_id)
