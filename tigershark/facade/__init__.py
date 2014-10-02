@@ -426,25 +426,26 @@ class X12SegmentBridge(object):
     def __str__(self):
         return str(self.segment)
 
-    def compositeList( self, *names ):
-        sep= self.segment.message.getCompositeSeparator()
-        result= []
-        pos= 1
+    def compositeList(self, *names):
+        sep = self.segment.message.getCompositeSeparator()
+        result = []
+        pos = 1
         while self.segment.getByPos(pos) is not "":
-            composite= self.segment.getByPos( pos )
-            # XXX - Seems vaguely icky to parse composites here.
-            subElts= composite.split( sep )
+            composite = self.segment.getByPos(pos)
+            subElts = composite.split(sep)
             if subElts[0] in names:
-                result.append( subElts )
+                result.append(subElts)
             pos += 1
         return result
-    def composite( self, *name ):
-        compList= self.compositeList( *name )
-        if len(compList) > 0: return compList[0]
-        return None # technically redundant to do this.
+
+    def composite(self, *name):
+        compList = self.compositeList(*name)
+        if len(compList) > 0:
+            return compList[0]
+        return None
 
 
-class SegmentAccess( object ):
+class SegmentAccess(object):
     """Used to get a single segment.
 
     Best used in Conjunction with X12SegmentBridge, eg:
@@ -462,30 +463,32 @@ class SegmentAccess( object ):
                 x12type=SegmentConversion(NamedEntity))
 
     """
-    def __init__( self, segment, qualifier=None, x12type=None ):
-        self.segment= segment
+    def __init__(self, segment, qualifier=None, x12type=None):
+        self.segment = segment
         if qualifier is None:
-            self.qualifier= None
-        elif isinstance(qualifier, (list,tuple)):
-            self.qualifier= qualifier
+            self.qualifier = None
+        elif isinstance(qualifier, (list, tuple)):
+            self.qualifier = qualifier
         else:
-            self.qualifier= ( qualifier, )
-        self.x12type= x12type
+            self.qualifier = (qualifier, )
+        self.x12type = x12type
 
-    def __repr__( self ):
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "SegmentAccess( %r, %r, %s )" % ( self.segment, self.qualifier, typeName )
+        return "SegmentAccess( %r, %r, %s )" % (
+            self.segment, self.qualifier, typeName)
 
-    def __get__( self, instance, owner ):
+    def __get__(self, instance, owner):
         """Get the requested Segment and convert it, if applicable.
 
         :param instance: An X12LoopBridge object.
         """
         if self.qualifier is None:
-            segBridge = instance.segment( self.segment, )
+            segBridge = instance.segment(self.segment, )
         else:
-            segBridge = instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+            segBridge = instance.segment(
+                self.segment, self.qualifier[0], inList=self.qualifier[1:])
         if segBridge is None:
             return None
         return self.x12type.x12_to_python(segBridge.segment)
