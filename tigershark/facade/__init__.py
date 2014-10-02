@@ -823,7 +823,7 @@ class ElementAccess(object):
             return raw
 
     def __set__(self, instance, value):
-        qualifier = self.get_qualifier(instance, owner)
+        qualifier = self.get_qualifier(instance, None)
         if self.x12type is not None:
             raw = self.x12type.python_to_x12(value)
         else:
@@ -976,9 +976,9 @@ class CompositeAccess(ElementAccess):
             compList.extend(seg.compositeList(*self.qualifier))
         data = []
         for composite in compList:
-            raw = self.compPosition.get( composite )
+            raw = self.compPosition.get(composite)
             if self.x12type is not None:
-                data.append(self.x12type.x12_to_python(raw ))
+                data.append(self.x12type.x12_to_python(raw))
             else:
                 data.append(raw)
         return data[0]
