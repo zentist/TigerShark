@@ -39,7 +39,7 @@ class TestUtil(unittest.TestCase):
                 facade = apply_facade_to_simple_x12(x12_contents)
 
                 self.assertEqual(facade.x12_version_string,
-                                 version_tuple.short_string)
+                                 version_tuple.version_string)
                 self.assertEqual(facade.transaction_set_identifier_code,
                                  transaction_set_id)
             else:

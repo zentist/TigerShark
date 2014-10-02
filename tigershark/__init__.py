@@ -20,19 +20,45 @@ _X12VersionTuple = namedtuple('X12VersionTuple', (
 
 
 class X12VersionTuple(_X12VersionTuple):
+    """
+    A structured representation of an X12 version / release / industry id code.
+
+    Attributes:
+      * version: The integer version number.
+      * release: The integer release number.
+      * subrelease: The integer subrelease number.
+      * industry_identifier_code: The string industry identifer code.
+
+    For example, the representation of 004010X091 is:
+
+        X12VersionTuple(
+            version=4,
+            release=1,
+            subrelease=0,
+            industry_identifier_code='X091')
+    """
 
     @classmethod
     def for_4010(cls, industry_identifier_code):
+        """
+        Construct an X12VersionTuple for 4010 with the given industry id code.
+        """
         return cls(version=4, release=1, subrelease=0,
                    industry_identifier_code=industry_identifier_code)
 
     @classmethod
     def for_5010(cls, industry_identifier_code):
+        """
+        Construct an X12VersionTuple for 5010 with the given industry id code.
+        """
         return cls(version=5, release=1, subrelease=0,
                    industry_identifier_code=industry_identifier_code)
 
     @property
     def is_4010(self):
+        """
+        True if this is a 4010 version.
+        """
         return (
             self.version == 4
             and self.release == 1
@@ -41,6 +67,9 @@ class X12VersionTuple(_X12VersionTuple):
 
     @property
     def is_5010(self):
+        """
+        True if this is a 5010 version.
+        """
         return (
             self.version == 5
             and self.release == 1
@@ -48,7 +77,10 @@ class X12VersionTuple(_X12VersionTuple):
         )
 
     @property
-    def short_string(self):
+    def version_string(self):
+        """
+        The string representation of a version without the industry id code.
+        """
         return '{}{:02}{}'.format(self.version, self.release, self.subrelease)
 
 

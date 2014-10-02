@@ -32,6 +32,6 @@ class TestGenericParsing(unittest.TestCase):
             facade = get_facade(transaction_set_id, version_tuple)(x12)
 
             self.assertEqual(facade.x12_version_string,
-                             version_tuple.short_string)
+                             version_tuple.version_string)
             self.assertEqual(facade.transaction_set_identifier_code,
                              transaction_set_id)
