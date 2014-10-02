@@ -493,11 +493,11 @@ class SegmentAccess(object):
             return None
         return self.x12type.x12_to_python(segBridge.segment)
 
-    def __set__( self, instance, value ):
-        raise UnimplementedError( "Can't set segment sequences, yet")
+    def __set__(self, instance, value):
+        raise NotImplementedError("Can't set segment sequences, yet")
 
 
-class SegmentSequenceAccess( object ):
+class SegmentSequenceAccess(object):
     """Define access to sequence of Segments with a user-friendly attribute name.
     This appears as a sequence of individual object instances.
     This requires a :class:`Conversion` for doing data
@@ -507,162 +507,193 @@ class SegmentSequenceAccess( object ):
     mappings to X12Segments in an :class:`X12.message.X12Loop` instance.
 
     This is a Descriptor, which implements the attribute name via implicit
-    getters and setters defined in this class.  These are attached to X12LoopBridge
-    objects, so "instance" is always a specific X12LoopBridge, and owner is
-    a subclass of X12LoopBridge.
+    getters and setters defined in this class.  These are attached to
+    X12LoopBridge objects, so "instance" is always a specific X12LoopBridge,
+    and owner is a subclass of X12LoopBridge.
 
-        -   __get__ must locate the Segments and provide lists of string element values
-            to a Conversion class.
+        -   __get__ must locate the Segments and provide lists of string
+            element values to a Conversion class.
 
-        -   __set__ must convert objects to lists of strings, then locate the elements and replace their
-            values.
+        -   __set__ must convert objects to lists of strings, then locate
+            the elements and replace their values.
     """
-    def __init__( self, segment, qualifier=None, x12type=None ):
+    def __init__(self, segment, qualifier=None, x12type=None):
         """Define an attribute.
-        Most attributes are the string values of Elements, simply accessed by position.
 
-        If an attribute has a non-string type, the :py:data:`x12type` parameter can identify
-        a :class:`Conversion` class to use.
+        Most attributes are the string values of Elements,
+        accessed by position.
 
-        If an attribute is on a Segment which can occur multiple times, with a qualified
-        value, then the :py:data:`qualifier` parameter is used to provide a tuple with
-        the position of the segment used for qualification and the value to test.
+        If an attribute has a non-string type, the :py:data:`x12type`
+        parameter can identify a :class:`Conversion` class to use.
 
-        For example: :samp:`segment="REF", qualifier=(2,"SY")` will examine all "REF" segments
-        within this loop, looking for one with :samp:`"SY"` in :samp:`REF02`.
+        If an attribute is on a Segment which can occur multiple times,
+        with a qualified value, then the :py:data:`qualifier` parameter
+        is used to provide a tuple with the position of the segment used
+        for qualification and the value to test.
 
-        :param segment: Name of the segment that contains the element which has the
-        value for this attribute.
-        :param qualifier: A qualifier tuple used when there are multiple instances
-        of the given segment name and a specific position in the segment must be tested.
+        For example: :samp:`segment="REF", qualifier=(2,"SY")` will examine
+        all "REF" segments within this loop, looking for one with :samp:`"SY"`
+        in :samp:`REF02`.
+
+        :param segment: Name of the segment that contains the element which
+        has the value for this attribute.
+        :param qualifier: A qualifier tuple used when there are multiple
+        instances of the given segment name and a specific position in the
+        segment must be tested.
         :param x12type: An X12type conversion class name.
         :returns: The element value for this attribute name.
         """
-        self.segment= segment
+        self.segment = segment
         if qualifier is None:
-            self.qualifier= None
-        elif isinstance(qualifier, (list,tuple)):
-            self.qualifier= qualifier
+            self.qualifier = None
+        elif isinstance(qualifier, (list, tuple)):
+            self.qualifier = qualifier
         else:
-            self.qualifier= ( qualifier, )
-        self.x12type= x12type
-    def __repr__( self ):
+            self.qualifier = (qualifier, )
+        self.x12type = x12type
+
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "SegmentSequenceAccess( %r, %r, %s )" % ( self.segment, self.qualifier, typeName )
-    def __get__( self, instance, owner ):
-        # XXX - Some are unfiltered...
-        if self.qualifier is None:
-            segBridgeList= instance.segList( self.segment, )
-        else:
-            segBridgeList= instance.segList( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
-        return [ self.x12type.x12_to_python(segBridge.segment) for segBridge in segBridgeList ]
-    def __set__( self, instance, value ):
-        raise UnimplementedError( "Can't set segment sequences, yet")
+        return "SegmentSequenceAccess( %r, %r, %s )" % (
+            self.segment, self.qualifier, typeName)
 
-class Position( object ):
+    def __get__(self, instance, owner):
+        if self.qualifier is None:
+            segBridgeList = instance.segList(self.segment)
+        else:
+            segBridgeList = instance.segList(
+                self.segment, self.qualifier[0], inList=self.qualifier[1:])
+        return [self.x12type.x12_to_python(segBridge.segment)
+                for segBridge in segBridgeList]
+
+    def __set__(self, instance, value):
+        raise NotImplementedError("Can't set segment sequences, yet")
+
+
+class Position(object):
     """Sets or gets the value of an Element in a Segment based on a
     single, fixed position.
     """
-    def __init__( self, position ):
+    def __init__(self, position):
         """Define a fixed Position for ElementAccess.
-        
+
         :param position: the numeric position of this element.
         """
-        self.position= position
-    def __repr__( self ):
-        return "Position(%d)" % ( self.position, )
-    def get( self, aSegment ):
+        self.position = position
+
+    def __repr__(self):
+        return "Position(%d)" % (self.position, )
+
+    def get(self, aSegment):
         """Get our defined Element out of the given X12Segment.
-        
+
         :param aSegment: an :class:`X12.message.X12Segment` to examine.
         """
-        return aSegment.getByPos( self.position )
-    def set( self, aSegment, value ):
+        return aSegment.getByPos(self.position)
+
+    def set(self, aSegment, value):
         """Set our defined Element within the given X12Segment.
-        
+
         :param aSegment: an :class:`X12.message.X12Segment` to update.
         :param value: the String value to place into the segment.
         """
-        aSegment.setByPos( self.position, value )
+        aSegment.setByPos(self.position, value)
 
-class OneOf( Position ):
+
+class OneOf(Position):
     """Sets or Gets the value of an Element by searching through a sequence
     of alternative Element pairs using a qualifier value.
-    This subclsas of Position is initialized with a sequence (qualifier,value) position pairs and
-    a qualifier value.  If the qualifier value matches the element
-    in the qualifier position, then the element in the value position
+    This subclsas of Position is initialized with a sequence (qualifier,value)
+    position pairs and a qualifier value.  If the qualifier value matches the
+    element in the qualifier position, then the element in the value position
     is used.
     """
-    def __init__( self, value, *posPairSeq ):
-        """Define a qualifier value and a sequence of (qualifier,value) positions ElementAccess.
-        
-        :param value: the qualifier value used to match the Element in one of the qualifier positions.
+    def __init__(self, value, *posPairSeq):
+        """Define a qualifier value and a sequence of (qualifier,value)
+        positions ElementAccess.
+
+        :param value: the qualifier value used to match the Element in one of
+        the qualifier positions.
         :param posPairSeq: sequence of (qualifierPosition, valuePosition)
         """
-        self.value= value
-        self.posPairSeq= posPairSeq
-    def __repr__( self ):
-        return "OneOf(%r,%r)" % ( self.value, self.posPairSeq, )
-    def get( self, aSegment ):
+        self.value = value
+        self.posPairSeq = posPairSeq
+
+    def __repr__(self):
+        return "OneOf(%r,%r)" % (self.value, self.posPairSeq)
+
+    def get(self, aSegment):
         """Get our defined element out of the given segment.
         If the qualifier value cannot be found, return None.
-        
+
         :param aSegment: an :class:`X12.message.X12Segment` to examine.
         """
         for qualPos, valPos in self.posPairSeq:
-            if aSegment.getByPos( qualPos ) == self.value:
-                return aSegment.getByPos( valPos )
+            if aSegment.getByPos(qualPos) == self.value:
+                return aSegment.getByPos(valPos)
         return None
-    def set( self, aSegment, value ):
+
+    def set(self, aSegment, value):
         """Set our defined element within the given segment.
         If the qualifier value cannot be found, raise a NotImplementedError.
-        
+
         XXX - Implement the ability to add qualifiers and values to a segment.
-        
+
         :param aSegment: an :class:`X12.message.X12Segment` to examine.
         :param value: the String value to place into the segment.
         """
         for qualPos, valPos in self.posPairSeq:
-            if aSegment.getByPos( qualPos ) == self.value:
-                aSegment.setByPos( valPos, value )
+            if aSegment.getByPos(qualPos) == self.value:
+                aSegment.setByPos(valPos, value)
                 return
-        raise NotImplementedError( "Unimplemented: add new OneOf value to this segment" )
+        raise NotImplementedError()
 
-class SequenceOf( Position ):
+
+class SequenceOf(Position):
     """Unwind a number of Elements into an sequence of attribute values.
-    Often, each value is a Composite element with a qualifier, plus additional values."""
-    def __init__( self, start, end ):
+    Often, each value is a Composite element with a qualifier, plus
+    additional values."""
+    def __init__(self, start, end):
         """Define a sequence Position for ElementAccess.
-        
+
         :param start: the first Element position within the Segment.
         :param end: last Element position within the Segment)
         """
-        self.start= start
-        self.end= end
-    def __repr__( self ):
-        return "SequenceOf(%d,%d)" % ( self.start, self.end, )
-    def get( self, aSegment ):
-        elementList= [ aSegment.getByPos(pos) for pos in range(self.start,self.end) if aSegment.getByPos(pos) is not None ]
-        return elementList
-    def set( self, aSegment, valueList ):
-        for pos,val in zip(range(self.start,self.end),valueList):
-            aSegment.setByPos(pos,val)
-            return
-        raise NotImplementedError( "Unimplemented: add new SequenceOf value to this segment" )
+        self.start = start
+        self.end = end
 
-class ElementAccess( object ):
-    """Define access to Element(s) within a Segment with a user-friendly attribute name.
-    This can also bind in a :class:`Position` for finding the specific Element, and
-    a :class:`Conversion` for doing data type conversion of the Element.
+    def __repr__(self):
+        return "SequenceOf(%d,%d)" % (self.start, self.end)
+
+    def get(self, aSegment):
+        elementList = [aSegment.getByPos(pos)
+                       for pos in range(self.start, self.end)
+                       if aSegment.getByPos(pos) is not None]
+        return elementList
+
+    def set(self, aSegment, valueList):
+        for pos, val in zip(range(self. start, self.end), valueList):
+            aSegment.setByPos(pos, val)
+            return
+        raise NotImplementedError()
+
+
+class ElementAccess(object):
+    """Define access to Element(s) within a Segment with a user-friendly
+    attribute name.
+
+    This can also bind in a :class:`Position` for finding the specific Element,
+    and a :class:`Conversion` for doing data type conversion of the Element.
 
     This class is used to create attribute definitions which are
-    mappings to positional Elements in an :class:`X12.message.X12Segment` instance.
+    mappings to positional Elements in an :class:`X12.message.X12Segment`
+    instance.
 
     This is a Descriptor, which implements the attribute name via implicit
-    getters and setters defined in this class.  These are attached to X12LoopBridge
-    objects, so "instance" is always a specific X12LoopBridge, and owner is
-    a subclass of X12LoopBridge.
+    getters and setters defined in this class.  These are attached to
+    X12LoopBridge objects, so "instance" is always a specific X12LoopBridge,
+    and owner is a subclass of X12LoopBridge.
 
     The instance object that has ElementAccess attribtues may influence the
     default qualifier used. For example:
@@ -681,10 +712,11 @@ class ElementAccess( object ):
     and I do apologize for the weird behavior but I have a deadline to meet.
     At least I left behind this helpful comment...
 
-        -   __get__ must locate the elements and provide string to a Conversion class.
+        -   __get__ must locate the elements and provide string to a
+            Conversion class.
 
-        -   __set__ must convert strings, then locate the elements and replace their
-            values.
+        -   __set__ must convert strings, then locate the elements and
+            replace their values.
     """
     def __init__( self, segment, position=None, oneOf=None, qualifier=None, x12type=None ):
         """Define an attribute.
