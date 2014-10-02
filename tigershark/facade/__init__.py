@@ -718,65 +718,75 @@ class ElementAccess(object):
         -   __set__ must convert strings, then locate the elements and
             replace their values.
     """
-    def __init__( self, segment, position=None, oneOf=None, qualifier=None, x12type=None ):
+    def __init__(self, segment, position=None, oneOf=None,
+                 qualifier=None, x12type=None):
         """Define an attribute.
-        Most attributes are the string values of Elements, simply accessed by position.
 
-        If an attribute has a non-string type, the :py:data:`x12type` parameter can identify
-        a :class:`Conversion` class to use.
+        Most attributes are the string values of Elements,
+        accessed by position.
 
-        If an attribute is on a Segment which can occur multiple times, with a qualified
-        value, then the :py:data:`qualifier` parameter is used to provide a tuple with
-        the position of the segment used for qualification and the value to test.
+        If an attribute has a non-string type, the :py:data:`x12type`
+        parameter can identify a :class:`Conversion` class to use.
 
-        For example: :samp:`segment="REF", qualifier=(2,"SY")` will examine all "REF" segments
-        within this loop, looking for one with :samp:`"SY"` in :samp:`REF02`.
+        If an attribute is on a Segment which can occur multiple times,
+        with a qualified value, then the :py:data:`qualifier` parameter
+        is used to provide a tuple with the position of the segment used
+        for qualification and the value to test.
 
-        If an attribute occurs multiple times within a segment, and a qualifying
-        element is used, then the :class:`oneOf` parameter is used.  This accepts a sequence
-        of values: the first is a test to use, the remaining values are
-        pairs of positions.  The first position is used to test, the second position
-        is the result.
+        For example: :samp:`segment="REF", qualifier=(2,"SY")` will examine
+        all "REF" segment within this loop, looking for one with :samp:`"SY"`
+        in :samp:`REF02`.
 
-        For example: :samp:`segment="PER", oneOf=( "EM", (3,4), (5,6), (7,8) )` means that
-        if element 3 is "EM", the attribute is element 4; if element 5 is "EM",
-        the attribute is element 6; if element 7 is "EM", the attribute is element 8.
+        If an attribute occurs multiple times within a segment, and a
+        qualifying element is used, then the :class:`oneOf` parameter is used.
+        This accepts a sequence of values: the first is a test to use, the
+        remaining values are pairs of positions.  The first position is used
+        to test, the second position is the result.
 
-        :param segment: Name of the segment that contains the element which has the
-        value for this attribute.
-        :param position: integer position of the element within the segment; this
-        is not used if oneOf is used to pick a position.
+        For example: :samp:`segment="PER", oneOf=( "EM", (3,4), (5,6), (7,8) )`
+        means that if element 3 is "EM", the attribute is element 4;
+        if element 5 is "EM", the attribute is element 6; if element 7 is "EM",
+        the attribute is element 8.
+
+        :param segment: Name of the segment that contains the element which
+        has the value for this attribute.
+        :param position: integer position of the element within the segment;
+        this is not used if oneOf is used to pick a position.
         :param oneOf: a sequence with a qualifier and position pairs used to
         examine a qualifier element and a value element.  Example
-        :samp:`oneOf=( "EM", (3,4), (5,6), (7,7)`.  If oneOf is used, position is
-        meaningless.
-        :param qualifier: A qualifier tuple used when there are multiple instances
-        of the given segment name and a specific position in the segment must be tested.
+        :samp:`oneOf=( "EM", (3,4), (5,6), (7,7)`.  If oneOf is used, position
+        is meaningless.
+        :param qualifier: A qualifier tuple used when there are multiple
+        instances of the given segment name and a specific position in the
+        segment must be tested.
         :param x12type: An X12type conversion class name.
         :returns: The element value for this attribute name.
         """
-        self.segment= segment
+        self.segment = segment
         if isinstance(position, int):
-            self.position= Position( position )
-        elif isinstance(oneOf, (list,tuple) ):
-            self.position= OneOf( *oneOf )
-        elif isinstance( position, Position ):
-            self.position= position
+            self.position = Position(position)
+        elif isinstance(oneOf, (list, tuple)):
+            self.position = OneOf(*oneOf)
+        elif isinstance(position, Position):
+            self.position = position
         else:
-            raise TypeError( "position (%r) is an unrecognized type (%s)" % ( position, type(position) ) )
-        if isinstance(qualifier, (list,tuple)):
-            self.qualifier= qualifier
+            raise TypeError("position (%r) is an unrecognized type (%s)" % (
+                position, type(position)))
+        if isinstance(qualifier, (list, tuple)):
+            self.qualifier = qualifier
         else:
-            self.qualifier= ( qualifier, )
-        self.x12type= x12type
-    def __repr__( self ):
+            self.qualifier = (qualifier, )
+        self.x12type = x12type
+
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "ElementAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+        return "ElementAccess( %r, %r, %r, %s )" % (
+            self.segment, self.position, self.qualifier, typeName)
 
     def get_qualifier(self, instance, owner):
         """ Allow instance to influence the qualifier.
-        
+
         This is a huge, regrettable hack. This will cause bugs that will take
         you hours to track down. I'm so sorry.
 
@@ -790,13 +800,14 @@ class ElementAccess(object):
             return self.qualifier
         return (None,)
 
-    def __get__( self, instance, owner ):
+    def __get__(self, instance, owner):
         qualifier = self.get_qualifier(instance, owner)
         if isinstance(instance, X12LoopBridge):
-            segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
+            segBridge = instance.segment(
+                self.segment, qualifier[0], inList=qualifier[1:])
         else:
             # ElementAccess works on a Segment which doesn't include qualifier
-            # info, so make sure the current Segment has the qualifier 
+            # info, so make sure the current Segment has the qualifier.
             if qualifier[0] is None or \
                     instance.segment.getByPos(qualifier[0]) == qualifier[1]:
                 segBridge = instance
@@ -805,52 +816,61 @@ class ElementAccess(object):
         if segBridge is None:
             raw = None
         else:
-            raw = self.position.get( segBridge.segment )
+            raw = self.position.get(segBridge.segment)
         if self.x12type is not None:
-            return self.x12type.x12_to_python( raw )
+            return self.x12type.x12_to_python(raw)
         else:
             return raw
-    def __set__( self, instance, value ):
-        qualifier = self.get_qualifier(instance, owner)
-        if x12type is not None:
-            raw= self.x12type.python_to_x12( value )
-        else:
-            raw= value
-        segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
-        if segBridge is None:
-            raise MissingSegment( "Segment %s (%r) Not Found" % ( self.segment, qualifier ) )
-        else:
-            self.position.set( segBridge.segment, raw )
 
-class ElementSequenceAccess( ElementAccess ):
-    """Map a user-friendly attribute name to an sequence of Elements that occur in multiple
-    copies of a Segment type.  This is used for the "NTE" Segments where
-    a sequence of individual instances occur within a 2300 claim details loop.
+    def __set__(self, instance, value):
+        qualifier = self.get_qualifier(instance, owner)
+        if self.x12type is not None:
+            raw = self.x12type.python_to_x12(value)
+        else:
+            raw = value
+        segBridge = instance.segment(
+            self.segment, qualifier[0], inList=qualifier[1:])
+        if segBridge is None:
+            raise MissingSegment(
+                "Segment %s (%r) Not Found" % (self.segment, qualifier))
+        else:
+            self.position.set(segBridge.segment, raw)
+
+
+class ElementSequenceAccess(ElementAccess):
+    """Map a user-friendly attribute name to an sequence of Elements
+    that occur in multiple copies of a Segment type.  This is used for the
+    "NTE" Segments where a sequence of individual instances occur within a
+    2300 claim details loop.
 
     This is a Descriptor which implements the attributes name using
     __get__ and __set__ methods.
     """
-    def __init__( self, segment, position, qualPos=None, inList=None, notInList=None, x12type=None ):
+    def __init__(self, segment, position, qualPos=None,
+                 inList=None, notInList=None, x12type=None):
         """Build Element Access for a sequence of Elements.
-        
-        :param segment: Name of the segments that contains the elements which are the
-        values for this attribute.
+
+        :param segment: Name of the segments that contains the elements
+        which are the values for this attribute.
         :param position: integer position of the element within the segment.
-        :param qualPos: integer position of the qualifier attribute in each segment instance.
-        If omitted, all instances of the segment will become the sequence of values.
+        :param qualPos: integer position of the qualifier attribute in each
+        segment instance.
+        If omitted, all instances of the segment will become the sequence
+        of values.
         If used, either :meth:`inList` or :meth:`notInList` must be provided.
         :param inList: sequence of values to include segments.
         :param notInList: sequence of values to exclude segments.
         :param x12type: An X12type conversion class name.
         :returns: The sequence of element values for this attribute name.
         """
-        self.segment= segment
-        self.position= position
-        self.qualPos= qualPos
-        self.inList= inList
-        self.notInList= notInList
-        self.x12type= x12type
-    def __repr__( self ):
+        self.segment = segment
+        self.position = position
+        self.qualPos = qualPos
+        self.inList = inList
+        self.notInList = notInList
+        self.x12type = x12type
+
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
         return "ElementSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualPos, typeName )
