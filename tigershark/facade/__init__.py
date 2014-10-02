@@ -873,163 +873,186 @@ class ElementSequenceAccess(ElementAccess):
     def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "ElementSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualPos, typeName )
-    def __get__( self, instance, owner ):
-        segs= instance.segList( self.segment, self.qualPos, self.inList, self.notInList )
-        raw_list = [ s.segment.getByPos(self.position) for s in segs ]
+        return "ElementSequenceAccess( %r, %r, %r, %s )" % (
+            self.segment, self.position, self.qualPos, typeName)
+
+    def __get__(self, instance, owner):
+        segs = instance.segList(
+            self.segment, self.qualPos, self.inList, self.notInList)
+        raw_list = [s.segment.getByPos(self.position) for s in segs]
         if self.x12type is not None:
-            return [self.x12type.x12_to_python( raw ) for raw in raw_list]
+            return [self.x12type.x12_to_python(raw) for raw in raw_list]
         else:
             return raw_list
-    def __set__( self, instance, valueList ):
-        segs= instance.segList( self.segment, self.qualPos, self.inList, self.notInList )
-        for seg,val in zip(segs, valueList):
-            if seg is None or val is None:
-                raise NotImplementedError( "Unimplemented: number of values and segments don't match" )
-            if x12type is not None:
-                raw= self.x12type.python_to_x12( val )
-            else:
-                raw= val
-            seg.setByPos( self.position, raw )
 
-class CompositePosition( object ):
+    def __set__(self, instance, valueList):
+        segs = instance.segList(
+            self.segment, self.qualPos, self.inList, self.notInList)
+        for seg, val in zip(segs, valueList):
+            if seg is None or val is None:
+                raise NotImplementedError()
+            if self.x12type is not None:
+                raw = self.x12type.python_to_x12(val)
+            else:
+                raw = val
+            seg.setByPos(self.position, raw)
+
+
+class CompositePosition(object):
     """Sets or gets the value of an Element in a Composite based on a
     single, fixed position.
 
     Segments are managed as SegmentToken instances.  Composites, however,
     are simple sequences of strings.
     """
-    def __init__( self, *position ):
-        self.positions= position
-    def get( self, aComposite ):
-        return [ aComposite[c] if c < len(aComposite) else None for c in self.positions ]
-    def set( self, aComposite, *value ):
-        for pos,val in zip(self.positions,value):
-            assert pos is not None and val is not None, ValueError("values and composite positions diffent lengths")
-            aComposite[pos]= val
+    def __init__(self, *position):
+        self.positions = position
 
-class CompositeAccess( ElementAccess ):
+    def get(self, aComposite):
+        return [aComposite[c] if c < len(aComposite)
+                else None for c in self.positions]
+
+    def set(self, aComposite, *value):
+        for pos, val in zip(self.positions, value):
+            assert pos is not None and val is not None, ValueError(
+                "values and composite positions diffent lengths")
+            aComposite[pos] = val
+
+
+class CompositeAccess(ElementAccess):
     """Map a user-friendly attribute name to an Element of a Composite;
     the composites can be found
     anywhere among the occurances of a given Segment type.
-    This is used for the various "HI" Segments where a single value is located in a
-    qualified Composite.  This behaves a little bit like the OneOf position
-    for an ordinary ElementAccess.
+    This is used for the various "HI" Segments where a single value is
+    located in a qualified Composite.  This behaves a little bit like the
+    OneOf position for an ordinary ElementAccess.
 
-    Generally, a Composite has multiple Elements, the first of which is a qualifier.
-    The rest of which are the target values.
+    Generally, a Composite has multiple Elements, the first of which is
+    a qualifier. The rest of which are the target values.
 
     This is a Descriptor which implements the attributes name using
-    __get__ and __set__ methods.  This descriptor is associated with a subclass of
-    X12LoopBridge, the instance is a specific **Brige** and the owner is
-    the subclass of X12LoopBridge.
+    __get__ and __set__ methods.  This descriptor is associated with a
+    subclass of X12LoopBridge, the instance is a specific **Brige** and
+    the owner is the subclass of X12LoopBridge.
     """
-    def __init__( self, segment, compositeQualifier, compositePosition, x12type=None ):
+    def __init__(self, segment, compositeQualifier,
+                 compositePosition, x12type=None):
         """Build Composite Access for an individual Composite.
-        
-        :param segment: Name of the segments that contains the composites which are the
-        values for this attribute.
-        :param compositeQualifier: A qualifier string or tuple of strings that identifies
-        the composites to collect
-        :param compositePosition: The numeric position of the element within the Composite.
-        :param x12type: An X12type conversion class name.  This conversion will receive a
-        large, complex sequence of values decomposed from a Composite.
+
+        :param segment: Name of the segments that contains the composites
+        which are the values for this attribute.
+        :param compositeQualifier: A qualifier string or tuple of strings that
+        identifies the composites to collect
+        :param compositePosition: The numeric position of the element within
+        the Composite.
+        :param x12type: An X12type conversion class name. This conversion
+        will receive a large, complex sequence of values decomposed from
+        a Composite.
         :returns: The sequence of element values for this attribute name.
         """
-        self.segment= segment
-        if isinstance( compositeQualifier, (list,tuple) ):
-            self.qualifier= compositeQualifier
+        self.segment = segment
+        if isinstance(compositeQualifier, (list, tuple)):
+            self.qualifier = compositeQualifier
         else:
-            self.qualifier= (compositeQualifier,)
-        if isinstance( compositePosition, CompositePosition ):
-            self.compPosition= compositePosition
-        if isinstance( compositePosition, (list,tuple) ):
-            self.compPosition= CompositePosition( *compositePosition )
+            self.qualifier = (compositeQualifier,)
+        if isinstance(compositePosition, CompositePosition):
+            self.compPosition = compositePosition
+        if isinstance(compositePosition, (list, tuple)):
+            self.compPosition = CompositePosition(*compositePosition)
         else:
-            self.compPosition= CompositePosition( compositePosition )
-        self.x12type= x12type
-    def __repr__( self ):
+            self.compPosition = CompositePosition(compositePosition)
+        self.x12type = x12type
+
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "CompositeAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
-    def __get__( self, instance, owner ):
-        segList= instance.segList( self.segment )
-        compList= []
+        return "CompositeAccess( %r, %r, %r, %s )" % (
+            self.segment, self.position, self.qualifier, typeName)
+
+    def __get__(self, instance, owner):
+        segList = instance.segList(self.segment)
+        compList = []
         for seg in segList:
-            compList.extend( seg.compositeList( *self.qualifier ) )
-        data= []
+            compList.extend(seg.compositeList(*self.qualifier))
+        data = []
         for composite in compList:
-            raw= self.compPosition.get( composite )
+            raw = self.compPosition.get( composite )
             if self.x12type is not None:
-                data.append( self.x12type.x12_to_python( raw ) )
+                data.append(self.x12type.x12_to_python(raw ))
             else:
-                data.append( raw )
+                data.append(raw)
         return data[0]
-    def __set__( self, instance, value ):
+
+    def __set__(self, instance, value):
         """XXX - Implement this."""
-        raise NotImplementedError( "Unimplemented: can't update Composite" )
-        segList= instance.segList( self.segment )
-        # need to locate composite in this segList and update it.
+        raise NotImplementedError()
 
-class CompositeSequenceAccess( CompositeAccess ):
-    """Map a user-friendly attribute name to a sequence of Composites that occur
-    somewhere in the occurances of a given Segment type
-    This is used for the various "HI" Segments where a sequence of values is located in a
-    qualified Composites.
 
-    Each Composite Element has multiple values, the first of which is a qualifier
-    for the Composite.  The rest of which is the target values.
+class CompositeSequenceAccess(CompositeAccess):
+    """Map a user-friendly attribute name to a sequence of Composites
+    that occur somewhere in the occurances of a given Segment type.
+    This is used for the various "HI" Segments where a sequence of values
+    is located in a qualified Composites.
+
+    Each Composite Element has multiple values, the first of which
+    is a qualifier for the Composite. The rest of which is the target values.
 
     This is a Descriptor which implements the attributes name using
     __get__ and __set__ methods.
     """
-    def __init__( self, segment, compositeQualifier=None, x12type=None ):
+    def __init__(self, segment, compositeQualifier=None, x12type=None):
         """Build Composite Access for a sequence of Composites.
-        
-        :param segment: Name of the segments that contains the elements which are the
-        values for this attribute.
-        :param compositeQualifier: A qualifier string or tuple of strings that identifies
-        the composites to collect
-        :param x12type: An X12type conversion class name.  This conversion will receive a
-        large, complex sequence of values decomposed from a Composite.
+
+        :param segment: Name of the segments that contains the elements
+        which are the values for this attribute.
+        :param compositeQualifier: A qualifier string or tuple of strings
+        that identifies the composites to collect
+        :param x12type: An X12type conversion class name. This conversion
+        will receive a large, complex sequence of values decomposed from
+        a Composite.
         :returns: The sequence of element values for this attribute name.
         """
-        self.segment= segment
-        if isinstance( compositeQualifier, (list,tuple) ):
-            self.qualifier= compositeQualifier
+        self.segment = segment
+        if isinstance(compositeQualifier, (list, tuple)):
+            self.qualifier = compositeQualifier
         else:
-            self.qualifier= ( compositeQualifier, )
-        self.x12type= x12type
-    def __repr__( self ):
+            self.qualifier = (compositeQualifier, )
+        self.x12type = x12type
+
+    def __repr__(self):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "CompositeSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
-    def __get__( self, instance, owner ):
-        segList= instance.segList( self.segment )
-        compList= []
-        for seg in segList:
-            compList.extend( seg.compositeList( *self.qualifier ) )
-        data= []
-        for composite in compList:
-            raw= composite
-            if self.x12type is not None:
-                data.append( self.x12type.x12_to_python( raw ) )
-            else:
-                data.append( raw )
-        return data
-    def __set__( self, instance, value ):
-        """XXX - implement this."""
-        raise NotImplementedError( "Unimplemented: can't update Composite" )
+        return "CompositeSequenceAccess( %r, %r, %r, %s )" % (
+            self.segment, self.position, self.qualifier, typeName)
 
-class Conversion( object ):
+    def __get__(self, instance, owner):
+        segList = instance.segList(self.segment)
+        compList = []
+        for seg in segList:
+            compList.extend(seg.compositeList(*self.qualifier))
+        data = []
+        for composite in compList:
+            raw = composite
+            if self.x12type is not None:
+                data.append(self.x12type.x12_to_python(raw))
+            else:
+                data.append(raw)
+        return data
+
+    def __set__(self, instance, value):
+        raise NotImplementedError()
+
+
+class Conversion(object):
     """Convert between X12 strings and Python objects.
     This is the abstract superclass for all conversions.
     """
     @staticmethod
-    def x12_to_python( raw ):
+    def x12_to_python(raw):
         return NotImplemented
+
     @staticmethod
-    def python_to_x12( value ):
+    def python_to_x12(value):
         return NotImplemented
 
 
@@ -1057,8 +1080,8 @@ class TM(Conversion):
         if value is None:
             return ""
         return "{time}{centiseconds}".format(
-                time=value.strftime("%H%M%S"),
-                centiseconds=int(value.microsecond / 10000))
+            time=value.strftime("%H%M%S"),
+            centiseconds=int(value.microsecond / 10000))
 
 
 class D8(Conversion):
@@ -1093,8 +1116,8 @@ class DR(Conversion):
         if d1 is None or d2 is None or d1 == "" or d2 == "":
             return None
 
-        yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
-        yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
+        yy1, mm1, dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
+        yy2, mm2, dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
 
         return datetime.date(yy1, mm1, dd1), datetime.date(yy2, mm2, dd2)
 
@@ -1103,19 +1126,19 @@ class DR(Conversion):
         if value is None:
             return ""
         d1, d2 = value
-        return "%s-%s" % (d1.strftime( "4Y%m%d"), d2.strftime("%Y%m%d"))
+        return "%s-%s" % (d1.strftime("4Y%m%d"), d2.strftime("%Y%m%d"))
 
 
-class SegmentConversion( Conversion ):
+class SegmentConversion(Conversion):
     __name__ = "SegmentConversion"
     """Convert between an X12Segment and a proper Python object."""
-    def __init__( self, someClass ):
-        self.someClass= someClass
+    def __init__(self, someClass):
+        self.someClass = someClass
 
-    def x12_to_python( self, raw ):
-        return self.someClass( raw )
+    def x12_to_python(self, raw):
+        return self.someClass(raw)
 
-    def python_to_x12( self, value ):
+    def python_to_x12(self, value):
         return value.segment
 
 
@@ -1188,7 +1211,7 @@ def enum(options, raw_unknowns=False):
             elif value in options:
                 return value
             else:
-                for (k,v) in options.iteritems():
+                for (k, v) in options.iteritems():
                     if value == v:
                         return k
             if raw_unknowns:
