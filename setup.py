@@ -14,7 +14,7 @@ setup(
     author='Steven Buss & Steven Lott & Dave Peticolas',
     author_email='dave.peticolas@gmail.com',
     download_url=(
-        'https://github.com/sbuss/TigerShark/tarball/v%s' % __version__),
+        'https://github.com/jdavisp3/TigerShark/tarball/v%s' % __version__),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
