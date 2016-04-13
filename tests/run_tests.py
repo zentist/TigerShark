@@ -47,7 +47,7 @@ rows is important.
 
 """
 import os
-#from django.core.management import call_command
+from django.core.management import call_command
 import fnmatch
 import unittest
 import logging, sys
@@ -90,5 +90,4 @@ if __name__ == "__main__":
     logging.basicConfig( stream=sys.stderr, level=logging.INFO )
     djangoRunner( rootDir )
     popRunner( rootDir )
-    print 'TEST YYY'
     logging.shutdown()
