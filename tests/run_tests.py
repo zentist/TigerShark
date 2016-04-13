@@ -47,7 +47,7 @@ rows is important.
 
 """
 import os
-from django.core.management import call_command
+#from django.core.management import call_command
 import fnmatch
 import unittest
 import logging, sys
@@ -73,7 +73,7 @@ def popRunner( rootDir ):
     For Python 2.6, this doesn't properly process the test_wsClaims
     module.  That can be tested manually.
     """
-    testRoot= os.path.join( rootDir, "test" )
+    testRoot= os.path.join( rootDir, "tests" )
     topSuite= unittest.TestSuite()
     for path,dirList,fileList in os.walk( testRoot, topdown=True ):
         for f in fileList:
@@ -90,4 +90,5 @@ if __name__ == "__main__":
     logging.basicConfig( stream=sys.stderr, level=logging.INFO )
     djangoRunner( rootDir )
     popRunner( rootDir )
+    print 'TEST YYY'
     logging.shutdown()
