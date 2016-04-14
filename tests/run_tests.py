@@ -73,7 +73,7 @@ def popRunner( rootDir ):
     For Python 2.6, this doesn't properly process the test_wsClaims
     module.  That can be tested manually.
     """
-    testRoot= os.path.join( rootDir, "test" )
+    testRoot= os.path.join( rootDir, "tests" )
     topSuite= unittest.TestSuite()
     for path,dirList,fileList in os.walk( testRoot, topdown=True ):
         for f in fileList:
