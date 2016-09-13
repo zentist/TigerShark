@@ -4,8 +4,11 @@ Unit test of web.claims application as a complete Django WSGI web service.
 """
 from __future__ import print_function
 import unittest
-import httplib
-import urllib2, urllib
+try:
+    from httplib import HTTPConnection
+except ImportError:
+    from http.client import HTTPConnection
+import urllib
 import logging, sys
 import os.path
 import datetime
