@@ -441,7 +441,7 @@ class F835_4010(Facade):
         """Examine the message and extract the relevant Loops."""
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
         if st_loops:
-            self.facades = map(F835_4010, st_loops)
+            self.facades = [F835_4010(loop) for loop in st_loops]
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.payer = first(self.loops(Payer, anX12Message))
@@ -461,7 +461,7 @@ class F835_5010(Facade):
         """Examine the message and extract the relevant Loops."""
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
         if st_loops:
-            self.facades = map(F835_5010, st_loops)
+            self.facades = [F835_5010(loop) for loop in st_loops]
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.payer = first(self.loops(Payer, anX12Message))
