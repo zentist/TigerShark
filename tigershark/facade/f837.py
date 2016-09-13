@@ -61,6 +61,8 @@ Top-Level **Claim**.
 
 ..  autoclass:: Claim
 """
+from __future__ import print_function
+
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
 from tigershark.facade import ElementAccess
@@ -378,14 +380,14 @@ class Claim( object ):
         """Examine the message and extract the relevant Loops."""
         # XXX - determine 837P vs. 837I and Inpatient vs. Outpatient
         self.submitter= self.loops( Submitter, anX12Message )
-        print( "Loop 1000A, Submitter", map( str, self.submitter ) )
-        self.provider= self.loops( Provider, anX12Message )
-        print( "Loop 2000A, Billing Provider", map( str, self.provider ) )
-        self.subscriber= self.loops( Subscriber, anX12Message )
-        print( "Loop 2000B, Subscriber", map( str, self.subscriber ) )
+        print("Loop 1000A, Submitter", map( str, self.submitter ))
+        self.provider= self.loops(Provider, anX12Message)
+        print("Loop 2000A, Billing Provider", map( str, self.provider ))
+        self.subscriber= self.loops(Subscriber, anX12Message)
+        print("Loop 2000B, Subscriber", map( str, self.subscriber ))
         self.patient= self.loops( Institutional_Inpatient, anX12Message )
-        print( "Loop 2000C, Patient", map( str, self.patient ) )
+        print("Loop 2000C, Patient", map( str, self.patient ))
         # Loop 2300 - Claim Details
         self.claimDetails= self.loops( Institutional_ClaimDetails, anX12Message )
-        print( "Loop 2300, Claim Details", map( str, self.claimDetails ) )
+        print("Loop 2300, Claim Details", map( str, self.claimDetails ))
         # Loop 2400 - Service Lines
