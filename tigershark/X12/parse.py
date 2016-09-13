@@ -252,7 +252,10 @@ Class Definitions
 from __future__ import print_function
 from itertools import chain
 from itertools import count
-from itertools import izip
+try:
+    from itertools import izip
+except ImportError:
+    izip = zip
 from itertools import repeat
 import logging
 
