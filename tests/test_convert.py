@@ -11,7 +11,6 @@ from __future__ import print_function
 import unittest, logging, sys
 import os.path
 from tigershark.tools import convertPyX12
-import cStringIO
 import sqlite3.dbapi2 as sqlite
 import zipfile
 from tigershark.X12.map.source import FlatPythonVisitor
