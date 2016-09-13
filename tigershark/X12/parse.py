@@ -429,7 +429,7 @@ class Parser( object ):
     segmentHeader= 1
     def __init__( self, name, properties=None, *parts ):
         """Build a simple structure of sub-elements.
-        
+
         :param name: the X12 ID for this structure (Message, Loop, Segment, Element)
         :param properties: a Properties object with the description, etc.
         :param parts: Sub-Parsers that belong to this Parser.
@@ -793,7 +793,7 @@ class Message( Parser ):
     valid_types= ( Loop, )
     def __init__( self, name, properties, *loops ):
         """Build a parser for a given X12 message structure.
-        
+
         :param name: Name of this message.
         :param properties: instance of :class:`X12.parse.Properties` with Message
             properties.  Currently, only the :samp:`desc` property is used.
@@ -830,7 +830,7 @@ class Message( Parser ):
     def unmarshall(self, message, factory=MessageFactory, ignoreExtra=False):
         """Unmarshall the text version of an X12 message
         into a structure defined by the given factory.
-        
+
         :param message: X12 source text
         :param factory: A message instance Factory, by default :class:`X12.message.Factory`.
         :param ignoreExtra: If True, extra segments are ignored instead of

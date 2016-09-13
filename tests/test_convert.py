@@ -22,9 +22,9 @@ logger= logging.getLogger( __name__ )
 
 class TestConvertPyx12(unittest.TestCase):
     """Test conversion of PyX12 source XML definitions.
-    
+
     ..  note::
-    
+
         The ORIGINAL 278.4010.X094.A1.xml definition was improperly nested.
         The 2000A, 2000B, 2000C, 2000D, 2000E, 2000F Loop structure was not flat;
         a failure to match the Situational 2000D segment means that are

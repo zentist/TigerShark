@@ -5,7 +5,7 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 
 ..  autoclass:: DjangoModelVisitor
     :members:
-   
+
 ..  autoclass:: DjangoAdminVisitor
     :members:
 """
@@ -14,7 +14,7 @@ from tigershark.X12.parse import StopDescent
 
 class DjangoModelVisitor( StructureVisitor ):
     """Emit Django class definitions for Segments.
-    
+
     Extension to :class:`X12.parse.StructureVisitor`
     """
     def __init__( self, *args, **kw ):
@@ -67,7 +67,7 @@ class DjangoModelVisitor( StructureVisitor ):
 
 class DjangoAdminVisitor( StructureVisitor ):
     """Emit Django admin definitions for Segments.
-    
+
     Extension to :class:`X12.parse.StructureVisitor`
     """
     def __init__( self, *args, **kw ):

@@ -128,7 +128,7 @@ if __name__ == "__main__":
         stream=sys.stderr,
         level=logging.DEBUG,
     )
-    
+
     if sys.version_info[:2] <= ( 2, 6 ):
         #Python2.6 work-around
         setUpModule()

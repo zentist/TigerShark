@@ -365,7 +365,7 @@ class ServiceLineAdj( X12LoopBridge ):
 
 class Claim( object ):
     """A claim, built from an X12 :samp:`837` message.
-    
+
     :ivar submitter: A sequence of :class:`Submitter` instances from the 1000A loop.
     :ivar provider: A sequence of :class:`Provider` instances from the 2000A loop.
     :ivar subscriber: A sequence of :class:`Subscriber` instances from the 2000B loop.
