@@ -112,7 +112,7 @@ class TestControlHeaders(unittest.TestCase):
         self.assertEqual(group.version_tuple, X12_4010_X092A1)
 
     def test_all_parseable(self):
-        all_tests = sorted(TEST_FILE_MAP.iteritems())
+        all_tests = sorted(TEST_FILE_MAP.items())
         for (transaction_set_id, version_tuple), name in all_tests:
             facade = self.parse_file(name)
             control = facade.interchange_controls[0]

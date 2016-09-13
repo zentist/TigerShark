@@ -12,7 +12,7 @@ from tests import TEST_FILE_MAP
 class TestUtil(unittest.TestCase):
 
     def test_all_identifiable(self):
-        all_tests = sorted(TEST_FILE_MAP.iteritems())
+        all_tests = sorted(TEST_FILE_MAP.items())
 
         for expected, name in all_tests:
             with open(os.path.join('tests', name)) as f:
@@ -24,7 +24,7 @@ class TestUtil(unittest.TestCase):
             identify_simple_x12('not x12')
 
     def test_apply_facade(self):
-        all_tests = sorted(TEST_FILE_MAP.iteritems())
+        all_tests = sorted(TEST_FILE_MAP.items())
 
         for (transaction_set_id, version_tuple), name in all_tests:
             with open(os.path.join('tests', name)) as f:

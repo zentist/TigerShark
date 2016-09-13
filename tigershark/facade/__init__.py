@@ -1211,7 +1211,7 @@ def enum(options, raw_unknowns=False):
             elif value in options:
                 return value
             else:
-                for (k, v) in options.iteritems():
+                for (k, v) in options.items():
                     if value == v:
                         return k
             if raw_unknowns:

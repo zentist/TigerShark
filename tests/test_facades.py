@@ -18,7 +18,7 @@ class TestGenericParsing(unittest.TestCase):
                 get_facade(transaction_set_id, version_tuple)
 
     def test_all_facadable(self):
-        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.iteritems():  # nopep8
+        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.items():  # nopep8
             if transaction_set_id not in FACADE_MAP:
                 continue
             if version_tuple.version not in FACADE_MAP[transaction_set_id]:

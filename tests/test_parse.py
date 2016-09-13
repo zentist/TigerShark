@@ -33,7 +33,7 @@ class TestGenericParsing(unittest.TestCase):
                 list(get_parsers(transaction_set_id, version_tuple))
 
     def test_all_parseable(self):
-        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.iteritems():  # nopep8
+        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.items():  # nopep8
             with open(os.path.join('tests', name)) as f:
                 contents = f.read().replace('\n', '')
             parser = SimpleParser(transaction_set_id, version_tuple)
