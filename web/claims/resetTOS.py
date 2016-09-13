@@ -25,10 +25,10 @@ def resetTOS( source= "sql/typeofservice.csv" ):
                     description=row['description'])
                 tos.save()
                 count += 1
-            except Benefit.DoesNotExist, e:
+            except Benefit.DoesNotExist as e:
                 print( "?", row['benefit'] )
                 error += 1
-            except Benefit.MultipleObjectsReturned, e:
+            except Benefit.MultipleObjectsReturned as e:
                 print( "*", row['benefit'] )
                 error += 1
 

@@ -57,12 +57,12 @@ class TestConvertPyx12(unittest.TestCase):
     def testPythonOut( self ):
         try:
             # Creates response parser, parse_278
-            exec self.pyCode
-        except Exception, ex:
+            exec(self.pyCode)
+        except Exception as ex:
             logger.exception( self.pyCode )
         try:
             x12mssg= parse_278.unmarshall( self.msg1 )
-        except Exception, ex:
+        except Exception as ex:
             logger.exception( self.pyCode )
             eltPunct, compPunct, segPunct, segments= Message.tokenize(self.msg1)
             logger.error( segments )
@@ -76,7 +76,7 @@ class TestConvertPyx12(unittest.TestCase):
         try:
             for stmt in self.sqlCode.split( '\n;\n' ):
                 db.execute( stmt )
-        except sqlite.OperationalError, e:
+        except sqlite.OperationalError as e:
             logger.exception( stmt )
             raise
         db.close()

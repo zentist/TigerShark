@@ -1,3 +1,4 @@
+from __future__ import print_function
 from tigershark.X12 import message
 
 

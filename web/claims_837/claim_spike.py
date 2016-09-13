@@ -5,8 +5,9 @@ This allows a developer to implement the user's view of a :mod:`Claim`
 as navigation through the X12 message parsed by :func:`web.claims_837.parse_837i`.
 """
 from __future__ import print_function
+from __future__ import absolute_import
 from claims import Claim
-from parse import parse_837i
+from .parse import parse_837i
 
 
 if __name__ == "__main__":

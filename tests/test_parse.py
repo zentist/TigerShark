@@ -133,13 +133,13 @@ class TestPythonVisitor(unittest.TestCase):
         python = FlatPythonVisitor("parse_278")
         parse_278.visit(python)
         text = python.getSource()
-        exec text
+        exec(text)
 
     def testPythonVisitorWorks(self):
         python = FlatPythonVisitor("parse_278")
         parse_278.visit(python)
         text = python.getSource()
-        exec text
+        exec(text)
         self.assertEqual(type(parse_278), Message)
         msg = parse_278.unmarshall(self.msg1)
         # XXX - check the resulting structure

@@ -360,7 +360,7 @@ class X12Message( models.Model ):
         try:
             isa= self.descendant( 'segment', "ISA" )[0]
             return ( isa.getByPos(9), isa.getByPos(10), isa.getByPos(13) )
-        except Exception, e:
+        except Exception as e:
             logger.exception( "getISAid" )
             return None
     getISAid.short_description = 'ISA Date, Time and ID'
@@ -370,7 +370,7 @@ class X12Message( models.Model ):
         try:
             bht= self.descendant( 'segment', "BHT" )[0]
             return bht.getByPos(3)
-        except Exception, e:
+        except Exception as e:
             logger.exception( "getBHTid" )
             return None
     getBHTid.short_description = 'BHT Segment ID'

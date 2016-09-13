@@ -306,7 +306,7 @@ class ParserBuilder( object ):
         repeat= self.getChildTextValue( elementNode, "repeat" )  # TODO add support
         self.log.debug( "%*sElement id %r name %r usage %r seq %r data_ele %r",
                        nesting*2, '', eltXid, name, usage, seq, data_ele )
-        if not self.dataDictionary.has_key( data_ele ):
+        if data_ele not in self.dataDictionary:
             warnings.warn( UnknownElementWarning("No Data Element %r %r %r" % ( eltXid, data_ele, name ,) ) )
             data_type_tuple= (None,None,None)
         else:
@@ -334,7 +334,7 @@ class ParserBuilder( object ):
                        data_type=data_type_tuple, codes=codes, repeat=repeat, )
             )
 
-        if self.dataDictionary.has_key( data_ele ) and len(codes) != 0:
+        if data_ele in self.dataDictionary and len(codes) != 0:
             #self.log2.debug( "Segment Qual Parameter? %r %r", self.dataDictionary[data_ele], codes )
             pass
 

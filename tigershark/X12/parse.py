@@ -512,7 +512,7 @@ class Parser( object ):
         """Iterate through the components."""
         try:
             self.preVisit( visitor, indent )
-        except StopDescent, s:
+        except StopDescent as s:
             return
         for s in self.structure:
             s.visit( visitor, indent+1 )
@@ -841,7 +841,7 @@ class Message( Parser ):
         self.factory= factory
         try:
             self.eltPunct, self.compPunct, self.segPunct, self.segmentTokens= self.tokenize(message)
-        except ParseError, ex:
+        except ParseError as ex:
             ex.details= dict(
                 description= self.desc,
                 parser= self,

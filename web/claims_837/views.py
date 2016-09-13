@@ -40,7 +40,7 @@ def load( request ):
 def fetch( request, claim_id ):
     """GET request with claim_id.
     Fetch a given claim from the database.  Marshall it as an X12 message.
-    
+
     :param claimID: the claim identifier provided when the claim was loaded.
     :return: status tuple ( status, message )
     """
@@ -52,14 +52,14 @@ def fetch( request, claim_id ):
         else:
             object= { 'claim_id': claim_id, 'claim': None, 'message': "No claim matches %r" % ( claim_id ) }
             status= 404
-    except X12Message.DoesNotExist, e:
+    except X12Message.DoesNotExist as e:
         object= { 'claim_id': claim_id, 'claim': None, 'message': "No claim matches %r" % ( claim_id ) }
         status= 404
-    except Exception, e:
+    except Exception as e:
         logger.exception( e )
         object= { 'claim_id': claim_id, 'claim': None, 'message': "Internal Error %r" % ( claim_id ) }
         status= 500
-        
+
     return HttpResponse( content=json.dumps(object), status=status, content_type='application/json' )
 
 
@@ -123,10 +123,10 @@ class Loader( object ):
         in L{web.claims_837.parse} are tried to see which can successfully
         parse the message.  If the message can be parsed, the resulting object
         is persisted in the database, associated with the given properties.
-        
+
         Note that the properties are conformed into several
         different dimensions.  If there are unique values in the attributes,
-        new rows will be created in the dimension tables. 
+        new rows will be created in the dimension tables.
 
         :param claim: source text for an ``837`` claim.
         :param claimID: a unique identifier for this claim.
@@ -146,7 +146,7 @@ class Loader( object ):
                 msg.save()
                 self.log.debug( "Parser %s loaded %s", parser.desc, claimID )
                 break
-            except X12.parse.ParseError, e:
+            except X12.parse.ParseError as e:
                 # If we break trying to recognize the GS, then we're using the wrong parser
                 messageDesc, parser, segments = e.args
                 if segments is not None and segments[0][0] == 'GS':
@@ -156,7 +156,7 @@ class Loader( object ):
                     self.log.error( "Error in parser %s", parser )
                     e.log( log )
                 msg= None
-            except Exception, e:
+            except Exception as e:
                 # This is a non-parser error: it's some kind of bug.
                 self.log.error( "*** %r", e )
                 raise

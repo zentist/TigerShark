@@ -95,7 +95,7 @@ wsClaims= xmlrpclib.ServerProxy( "http://slott:slott@localhost:18000/RPC2/claim"
 def loadClaims( claimIter, claimId, properties=None, constraints=None ):
     """Load a collection of claims, all of which have a common set of properties
     and automod constraints.
-    
+
     :param claimIter: An iterator over some claims, a list or a file will work.
         Often an :mod:`X12.file` is used because it streamlines the file reading.
     :param claimId: The base claim id.  If multiple claims are loaded, then
@@ -118,7 +118,7 @@ def loadClaims( claimIter, claimId, properties=None, constraints=None ):
             else:
                 log.error( status )
                 error += 1
-        except xmlrpclib.ProtocolError, e:
+        except xmlrpclib.ProtocolError as e:
             log.error( str(e) )
             error += 1
         id= "%s-%d" % ( claimId, count )
@@ -139,10 +139,10 @@ def loadClaimAndDescription( csvFile ):
     csvReader= csv.DictReader( csvFile )
     for row in csvReader:
         # If Claim Text: put this in a simple list
-        if row.has_key("CLAIM-TEXT") and row["CLAIM-TEXT"] is not None:
+        if "CLAIM-TEXT" in row and row["CLAIM-TEXT"] is not None:
             claims= [ row["CLAIM-TEXT"] ]
         # elif Claim File: use X12.file to read the file
-        elif row.has_key("CLAIM-FILE") and row["CLAIM-FILE"] is not None:
+        elif "CLAIM-FILE" in row and row["CLAIM-FILE"] is not None:
             claims= X12.file.genClaims( row["CLAIM-FILE"] )
         # else: log a warning -- no claim present
         else:
