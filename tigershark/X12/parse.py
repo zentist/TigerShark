@@ -680,11 +680,11 @@ class Segment( Parser ):
         :returns: yields a single parsed Segment or raises StopIteration
         """
         if isinstance(self.repeat, int):
-            length_loop = xrange(self.repeat)
+            length_loop = range(self.repeat)
         elif self.repeat.startswith(">"):
             length_loop = count()
         else:
-            length_loop = xrange(int(self.repeat) if self.repeat.isdigit() else 1)
+            length_loop = range(int(self.repeat) if self.repeat.isdigit() else 1)
 
         required_loop = chain([self.required], repeat(False))
 
