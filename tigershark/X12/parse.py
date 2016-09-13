@@ -262,6 +262,12 @@ import logging
 # This is only to give us access a default Factory.
 from tigershark.X12.message import Factory as MessageFactory
 
+try:
+    STRING_TYPES = (str, unicode)
+except NameError:
+    STRING_TYPES = (str, bytes)
+
+
 class SegmentToken( object ):
     """A list-like object that gracefully handles a Segment with missing elements.
 
@@ -444,7 +450,7 @@ class Parser( object ):
         self.position= self.props.position
         self.parent= None
         self.theFactory= None
-        if type(name) not in ( str, unicode, None ):
+        if not isinstance(name, STRING_TYPES):
             raise StructureError( "Possible missing parameter: name")
         if type(properties) != Properties:
             raise StructureError( "Possible missing parameter: properties")
