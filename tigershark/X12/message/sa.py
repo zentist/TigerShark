@@ -25,7 +25,7 @@ This module inherits mappings for the following class definitions.
 
         - X12Element.  An atomic piece of data.  These are identified
           positionally within a segment's source text.
-          
+
 ..  autoclass:: Factory
     :members:
 """
@@ -48,7 +48,7 @@ class Factory( Factory ):
     @staticmethod
     def makeMessage( name, *structure ):
         """Create a new X12Message object.
-        
+
         :param name: name of this Message
         :param structure: the various Loops of this Message
         :returns: X12Message instance
@@ -57,7 +57,7 @@ class Factory( Factory ):
     @staticmethod
     def makeLoop( name, *structure ):
         """Create a new X12Loop object.
-        
+
         :param name: name of this Loop
         :param structure: the various sub-Loops and Segments of this Loop
         :returns: X12Loop instance

@@ -90,7 +90,7 @@ class Factory( X12.message.Factory ):
     @staticmethod
     def makeMessage( name, *structure ):
         """Create a new X12Message object.
-        
+
         :param name: name of this Message
         :param structure: the various Loops of this Message
         :returns: X12Message instance
@@ -104,7 +104,7 @@ class Factory( X12.message.Factory ):
     @staticmethod
     def makeLoop( name, *structure ):
         """Create a new X12Loop object.
-        
+
         :param name: name of this Loop
         :param structure: the various sub-Loops and Segments of this Loop
         :returns: X12Loop instance
@@ -144,7 +144,7 @@ class Location( models.Model ):
     """A named 'location' for a claim, usually geographic, but also possibly
     a line of business.  Often this is a constraint on
     members or providers associated with a claim.
-    
+
     :ivar name: short name of the location
     :ivar description: long description of the location
     """
@@ -157,7 +157,7 @@ class Location( models.Model ):
 
 class ClaimType( models.Model ):
     """The subtype of the :samp:`837` claim - Professional, Institutional, Dental.
-    
+
     :ivar name: short name of the claim type (usually 1 character)
     :ivar description: long name of the claim type
     """
@@ -170,7 +170,7 @@ class ClaimType( models.Model ):
 
 class SecondaryCoverage( models.Model ):
     """Any secondary coverage in the claim.
-    
+
     :ivar name: short name of the secondary coverage.
     :ivar description: long name of the secondary coverage.
     """
@@ -183,7 +183,7 @@ class SecondaryCoverage( models.Model ):
 
 class Benefit( models.Model ):
     """The primary benefit for this claim.
-    
+
     :ivar benefit: short name of the benefit
     :ivar description: long description of the benefit.
     """
@@ -230,7 +230,7 @@ class GroupStatus( models.Model ):
     This defines what processing is allowed for claim group.
     Claims in a :samp:`Base` group, for instance, cannot be changed.
     Other status may have additional or different features.
-    
+
     :ivar name: short status string
     :ivar description: definition of the status
     :ivar can_change: can claims in this group be changed?
@@ -250,7 +250,7 @@ class ClaimGroup( models.Model ):
     which collects groups together for different kinds of testing.
     A group also may have a dynamic processing state which reflects
     whether or not it has been sent to the claim processing system.
-    
+
     :ivar name: name of the claim group.  :samp:`Base` claims have
         a system-supplied default name.  All other claim status
         have user-supplied names.
@@ -279,7 +279,7 @@ class ClaimGroup( models.Model ):
 class ClaimProperties( models.Model ):
     """Selected properties of a claim.
     XXX - add source system.
-    
+
     :ivar claimType: one of the defined L{ClaimType}s for this claim
     :ivar secondaryCoverage: one of the defined L{SecondaryCoverage}s for this claim
     :ivar location: one of the defined L{Location}s for this claim
@@ -360,7 +360,7 @@ class X12Message( models.Model ):
         try:
             isa= self.descendant( 'segment', "ISA" )[0]
             return ( isa.getByPos(9), isa.getByPos(10), isa.getByPos(13) )
-        except Exception, e:
+        except Exception as e:
             logger.exception( "getISAid" )
             return None
     getISAid.short_description = 'ISA Date, Time and ID'
@@ -370,13 +370,13 @@ class X12Message( models.Model ):
         try:
             bht= self.descendant( 'segment', "BHT" )[0]
             return bht.getByPos(3)
-        except Exception, e:
+        except Exception as e:
             logger.exception( "getBHTid" )
             return None
     getBHTid.short_description = 'BHT Segment ID'
     def segs( self ):
         """Create the flat list of Segments under this Message.
-        
+
         :returns: list of X12Segment instances.
         """
         segList= []
@@ -385,7 +385,7 @@ class X12Message( models.Model ):
         return segList
     def marshall( self, segSep="~", eltSep="*" ):
         """Marshall this message into an X12 string.
-        
+
         :param segSep: (optional) Segment Terminator, usually :samp:`~`
         :param eltSep: (optional) Element Separator, usually :samp:`*`
         :returns: String with this X12 message marshalled
@@ -394,7 +394,7 @@ class X12Message( models.Model ):
         return segSep.join( [ s.marshall(eltSep) for s in segments ] ) + segSep
     def addChild( self, aLoop ):
         """Add a loop to this Message.
-        
+
         :param aLoop: an X12Loop instance.
         """
         self.save()
@@ -436,7 +436,7 @@ class X12Message( models.Model ):
 class TestConstraints( models.Model ):
     """The constraints that define how to modify this claim
     for unit test purposes.
-    
+
     :ivar gender: allowed member genders.
     :ivar age_low: minimum member age.
     :ivar age_high: maximum member age.
@@ -472,7 +472,7 @@ class X12Loop( models.Model ):
     :ivar occurrence: the occurrence of this Loop type within a parent loop.
         This is set by the parser when handling multiple occurrences of loops or
         segments.
-    
+
     ..  todo:: Admin interface for message children should be admin.StackedInline.
     """
     LOOP_KINDS = ( ('W','Wrapper'), ('E','Explicit') )
@@ -505,7 +505,7 @@ class X12Loop( models.Model ):
     def segs( self ):
         """Create a flat list of Segments under this Loop.
         This is the list of segments used for marshalling this message.
-        
+
         :returns: list of X12Segments.
         """
         segList= []
@@ -539,7 +539,7 @@ class X12Loop( models.Model ):
         An X12Segment will do this in a different way; a Segment must
         assure that it's being added to a Wrapper loop.  We're an X12Loop,
         however, and can add ourself to Explicit loops, only.
-        
+
         :param parent: the parent loop to which we're adding ourself.
         """
         if debug:
@@ -554,7 +554,7 @@ class X12Loop( models.Model ):
         If we are a Wrapper loop, we return ourself.
         If we are an Explicit loop, we need to add a Wrapper and then
         return that Wrapper.
-        
+
         :returns: X12Loop of kind=="W"
         """
         if self.kind == "W":
@@ -655,7 +655,7 @@ class X12Segment( models.Model ):
         return str( self.text )
     def bind( self, segment ):
         """Bind an :class:`X12.parse.Segment` to this data.
-        
+
         :param segment: An :class:`X12.parse.Segment` instance
         """
         self.segType= segment
@@ -664,7 +664,7 @@ class X12Segment( models.Model ):
         return [ self ]
     def getByPos( self, position ):
         """Get the value of an Element by the position number.
-        
+
         :param position: position of the Element
         :returns: string value of the Element.
         """
@@ -674,7 +674,7 @@ class X12Segment( models.Model ):
     def setByPos( self, position, value ):
         """Set the value of an Element by the position number.
         This updates the text attribute of the persistent object.
-        
+
         :param position: position of the Element
         :param value: String value to replace
         """
@@ -687,7 +687,7 @@ class X12Segment( models.Model ):
     def positionOf( self, name ):
         """Returns the position of a named Element.
         This only works if this X12Segment is bound to an :class:`X12.parse.Segment`.
-        
+
         :param name: Element name
         :returns: numberic position of this Element.
         """
@@ -700,14 +700,14 @@ class X12Segment( models.Model ):
     def getByName( self, name ):
         """Get the value of an Element by the element name.
         This only works if this X12Segment is bound to an :class:`X12.parse.Segment`.
-        
+
         :param name: name of the Element
         :returns: string value of the Element.
         """
         return self.getByPos( self.positionOf(name) )
     def marshall( self, eltSep="*" ):
         """Marshalls this Segment's elements as a text string.
-        
+
         :returns: String value of this Segment.
         """
         if self.elements is None:
@@ -723,7 +723,7 @@ class X12Segment( models.Model ):
         We ask the parent for the "segmentWrapper": if the parent is a
         Wrapper, that's what is returned; if the parent is Explicit,
         the parent inserts the necessary wrapper and returns the wrapper.
-        
+
         :param parentLoop: parent X12Loop to which we must add ourself.
         """
         if debug:

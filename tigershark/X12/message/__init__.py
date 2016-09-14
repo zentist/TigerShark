@@ -103,7 +103,7 @@ Details
 
 ..  autoclass:: X12Message
     :members:
-    
+
 SQL Alchemy module
 ===========================
 

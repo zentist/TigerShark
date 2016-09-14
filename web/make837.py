@@ -94,7 +94,7 @@ class ApplicationBuilder( object ):
             xml.read( os.path.join( self.baseDir, xmlDef) )
 
             self.x12p= self.bldParser.build( xml )
-        except Warning, w:
+        except Warning as w:
             log.warning( '*** WARNING IN %s', xmlDef )
             self.x12p= None
             raise

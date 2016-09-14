@@ -11,7 +11,6 @@ from __future__ import print_function
 import unittest, logging, sys
 import os.path
 from tigershark.tools import convertPyX12
-import cStringIO
 import sqlite3.dbapi2 as sqlite
 import zipfile
 from tigershark.X12.map.source import FlatPythonVisitor
@@ -22,9 +21,9 @@ logger= logging.getLogger( __name__ )
 
 class TestConvertPyx12(unittest.TestCase):
     """Test conversion of PyX12 source XML definitions.
-    
+
     ..  note::
-    
+
         The ORIGINAL 278.4010.X094.A1.xml definition was improperly nested.
         The 2000A, 2000B, 2000C, 2000D, 2000E, 2000F Loop structure was not flat;
         a failure to match the Situational 2000D segment means that are
@@ -57,12 +56,12 @@ class TestConvertPyx12(unittest.TestCase):
     def testPythonOut( self ):
         try:
             # Creates response parser, parse_278
-            exec self.pyCode
-        except Exception, ex:
+            exec(self.pyCode)
+        except Exception as ex:
             logger.exception( self.pyCode )
         try:
             x12mssg= parse_278.unmarshall( self.msg1 )
-        except Exception, ex:
+        except Exception as ex:
             logger.exception( self.pyCode )
             eltPunct, compPunct, segPunct, segments= Message.tokenize(self.msg1)
             logger.error( segments )
@@ -76,7 +75,7 @@ class TestConvertPyx12(unittest.TestCase):
         try:
             for stmt in self.sqlCode.split( '\n;\n' ):
                 db.execute( stmt )
-        except sqlite.OperationalError, e:
+        except sqlite.OperationalError as e:
             logger.exception( stmt )
             raise
         db.close()

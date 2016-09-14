@@ -11,7 +11,7 @@ class ControlHeaders(Facade):
     def __init__(self, x12_message):
         super(ControlHeaders, self).__init__()
         isa_loops = x12_message.descendant('LOOP', name='ISA_LOOP')
-        self.interchange_controls = map(InterchangeControlHeader, isa_loops)
+        self.interchange_controls = [InterchangeControlHeader(loop) for loop in isa_loops]
 
 
 class InterchangeControlHeader(X12LoopBridge):
@@ -42,7 +42,7 @@ class InterchangeControlHeader(X12LoopBridge):
     def __init__(self, x12_message):
         super(InterchangeControlHeader, self).__init__(x12_message)
         gs_loops = x12_message.descendant('LOOP', name='GS_LOOP')
-        self.functional_groups = map(FunctionalGroupHeader, gs_loops)
+        self.functional_groups = [FunctionalGroupHeader(loop) for loop in gs_loops]
 
 
 class FunctionalGroupHeader(X12LoopBridge):

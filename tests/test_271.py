@@ -23,7 +23,7 @@ class TestParsed271(unittest.TestCase):
                 "Information Receiver, Subscriber, or Dependent."))
         self.assertEqual(h.purpose, ("11", "Response"))
         self.assertEqual(h.transaction_id, "11111")
-        self.assertEqual(h.creation_date, datetime.date(2012, 06, 05))
+        self.assertEqual(h.creation_date, datetime.date(2012, 6, 5))
         self.assertEqual(h.creation_time, datetime.time(23, 24, 23))
 
     def test_number_of_receivers(self):

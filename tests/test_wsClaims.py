@@ -4,8 +4,11 @@ Unit test of web.claims application as a complete Django WSGI web service.
 """
 from __future__ import print_function
 import unittest
-import httplib
-import urllib2, urllib
+try:
+    from httplib import HTTPConnection
+except ImportError:
+    from http.client import HTTPConnection
+import urllib
 import logging, sys
 import os.path
 import datetime
@@ -128,7 +131,7 @@ if __name__ == "__main__":
         stream=sys.stderr,
         level=logging.DEBUG,
     )
-    
+
     if sys.version_info[:2] <= ( 2, 6 ):
         #Python2.6 work-around
         setUpModule()

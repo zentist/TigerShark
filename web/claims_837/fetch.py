@@ -62,7 +62,7 @@ def fetchClaims( csvFile ):
                 print( claim )
             else:
                 print( "***", claim )
-        except xmlrpclib.ProtocolError, e:
+        except xmlrpclib.ProtocolError as e:
             print( e )
             print( "*** Could not fetch", claimId )
 

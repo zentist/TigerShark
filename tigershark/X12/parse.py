@@ -252,12 +252,21 @@ Class Definitions
 from __future__ import print_function
 from itertools import chain
 from itertools import count
-from itertools import izip
+try:
+    from itertools import izip
+except ImportError:
+    izip = zip
 from itertools import repeat
 import logging
 
 # This is only to give us access a default Factory.
 from tigershark.X12.message import Factory as MessageFactory
+
+try:
+    STRING_TYPES = (str, unicode)
+except NameError:
+    STRING_TYPES = (str, bytes)
+
 
 class SegmentToken( object ):
     """A list-like object that gracefully handles a Segment with missing elements.
@@ -429,7 +438,7 @@ class Parser( object ):
     segmentHeader= 1
     def __init__( self, name, properties=None, *parts ):
         """Build a simple structure of sub-elements.
-        
+
         :param name: the X12 ID for this structure (Message, Loop, Segment, Element)
         :param properties: a Properties object with the description, etc.
         :param parts: Sub-Parsers that belong to this Parser.
@@ -441,7 +450,7 @@ class Parser( object ):
         self.position= self.props.position
         self.parent= None
         self.theFactory= None
-        if type(name) not in ( str, unicode, None ):
+        if not isinstance(name, STRING_TYPES):
             raise StructureError( "Possible missing parameter: name")
         if type(properties) != Properties:
             raise StructureError( "Possible missing parameter: properties")
@@ -512,7 +521,7 @@ class Parser( object ):
         """Iterate through the components."""
         try:
             self.preVisit( visitor, indent )
-        except StopDescent, s:
+        except StopDescent as s:
             return
         for s in self.structure:
             s.visit( visitor, indent+1 )
@@ -671,11 +680,11 @@ class Segment( Parser ):
         :returns: yields a single parsed Segment or raises StopIteration
         """
         if isinstance(self.repeat, int):
-            length_loop = xrange(self.repeat)
+            length_loop = range(self.repeat)
         elif self.repeat.startswith(">"):
             length_loop = count()
         else:
-            length_loop = xrange(int(self.repeat) if self.repeat.isdigit() else 1)
+            length_loop = range(int(self.repeat) if self.repeat.isdigit() else 1)
 
         required_loop = chain([self.required], repeat(False))
 
@@ -793,7 +802,7 @@ class Message( Parser ):
     valid_types= ( Loop, )
     def __init__( self, name, properties, *loops ):
         """Build a parser for a given X12 message structure.
-        
+
         :param name: Name of this message.
         :param properties: instance of :class:`X12.parse.Properties` with Message
             properties.  Currently, only the :samp:`desc` property is used.
@@ -830,7 +839,7 @@ class Message( Parser ):
     def unmarshall(self, message, factory=MessageFactory, ignoreExtra=False):
         """Unmarshall the text version of an X12 message
         into a structure defined by the given factory.
-        
+
         :param message: X12 source text
         :param factory: A message instance Factory, by default :class:`X12.message.Factory`.
         :param ignoreExtra: If True, extra segments are ignored instead of
@@ -841,7 +850,7 @@ class Message( Parser ):
         self.factory= factory
         try:
             self.eltPunct, self.compPunct, self.segPunct, self.segmentTokens= self.tokenize(message)
-        except ParseError, ex:
+        except ParseError as ex:
             ex.details= dict(
                 description= self.desc,
                 parser= self,

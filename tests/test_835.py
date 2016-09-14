@@ -41,7 +41,7 @@ class TestParsed835(unittest.TestCase):
             fi.receiver_canadian_bank_branch_and_institution_number, None)
         self.assertEqual(fi.receiver_account_type, ('DA', 'Demand Deposit'))
         self.assertEqual(fi.receiver_bank_account_number, '3333333333')
-        self.assertEqual(fi.issue_date, datetime.date(2012, 03, 22))
+        self.assertEqual(fi.issue_date, datetime.date(2012, 3, 22))
 
     def test_reassociation_trace_number(self):
         rtn = self.f.facades[0].header.reassociation_trace_number
@@ -56,7 +56,7 @@ class TestParsed835(unittest.TestCase):
 
     def test_production_date(self):
         pd = self.f.facades[0].header.production_date
-        self.assertEqual(pd.date, datetime.date(2012, 03, 19))
+        self.assertEqual(pd.date, datetime.date(2012, 3, 19))
 
     def test_payer(self):
         p = self.f.facades[0].payer
@@ -158,7 +158,7 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_received, None)
         self.assertEqual(
             c.date_statement_period_start,
-            datetime.date(2012, 02, 22))
+            datetime.date(2012, 2, 22))
         self.assertEqual(
             c.claim_adjustments.patient_responsibility.amount_1,
             Decimal('0.0'))
@@ -171,7 +171,7 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(l.charge, Decimal('200.02'))
         self.assertEqual(l.payment, Decimal('200.02'))
         self.assertEqual(l.quantity, '1')
-        self.assertEqual(l.service_date, datetime.date(2012, 02, 22))
+        self.assertEqual(l.service_date, datetime.date(2012, 2, 22))
         self.assertEqual(l.provider_control_number, '251111111111')
         self.assertEqual(l.allowed_amount, Decimal('200.02'))
         self.assertEqual(
@@ -225,10 +225,10 @@ class TestParsed835(unittest.TestCase):
 
         self.assertEqual(c.group_or_policy_number, '717171')
         self.assertEqual(c.contract_class, 'CHOYC')
-        self.assertEqual(c.date_received, datetime.date(2012, 03, 03))
+        self.assertEqual(c.date_received, datetime.date(2012, 3, 3))
         self.assertEqual(
             c.date_statement_period_start,
-            datetime.date(2012, 02, 23))
+            datetime.date(2012, 2, 23))
         self.assertEqual(
             c.claim_adjustments.patient_responsibility.amount_1,
             Decimal('145.0'))
@@ -242,7 +242,7 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(l.charge, Decimal('23276.56'))
         self.assertEqual(l.payment, Decimal('12145.65'))
         self.assertEqual(l.quantity, '1')
-        self.assertEqual(l.service_date, datetime.date(2012, 02, 21))
+        self.assertEqual(l.service_date, datetime.date(2012, 2, 21))
         self.assertEqual(l.provider_control_number, '252222222222')
         self.assertEqual(
             l.claim_adjustments.contractual_obligation.amount_1,

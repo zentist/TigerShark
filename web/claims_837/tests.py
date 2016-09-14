@@ -2,6 +2,7 @@
 """Unit tests for the web.claims_837 application.
 """
 from __future__ import print_function
+from __future__ import absolute_import
 from  django.test import TestCase
 import logging, sys
 import os.path
@@ -10,7 +11,7 @@ import json
 from X12.parse import SegmentToken, ParseError
 from web.claims.models import X12Segment, X12Loop, X12Message
 from web.claims_837.models import Factory
-from parse import parse_837p, parse_837d, parse_837i
+from .parse import parse_837p, parse_837d, parse_837i
 
 logging.basicConfig( stream=sys.stderr, level=logging.INFO )
 
@@ -26,7 +27,7 @@ class ParseTest( TestCase ):
     def test837p( self ):
         try:
             msg= parse_837p.unmarshall( self.some837 )
-        except ParseError, e:
+        except ParseError as e:
             print( '***', e )
             self.fail( "Claim is supposed to be 837-Professional")
         st= msg.descendant( 'SEGMENT', 'ST' )
@@ -43,13 +44,13 @@ class ParseTest( TestCase ):
         try:
             msg= parse_837i.unmarshall( self.some837 )
             self.fail("Claim wrongly matched 837-Institutional")
-        except ParseError, e:
+        except ParseError as e:
             print( 'Expected:', e )
     def test837d( self ):
         try:
             msg= parse_837d.unmarshall( self.some837 )
             self.fail( "Claim wrongly matched 837-Dental")
-        except ParseError, e:
+        except ParseError as e:
             print( 'Expected:', e )
 
 class PersistTest( TestCase ):
@@ -64,7 +65,7 @@ class PersistTest( TestCase ):
     def testPersist837p( self ):
         try:
             msg= parse_837p.unmarshall( self.some837, Factory )
-        except ParseError, e:
+        except ParseError as e:
             print( '***', e )
             self.fail( "Claim is supposed to be 837-Professional")
         for msg in X12Message.objects.all():
@@ -89,7 +90,7 @@ class TestWS( TestCase ):
         msg.save()
     def test_load( self ):
         properties = {
-            'TYPE': '', # a :class:`ClaimType` 
+            'TYPE': '', # a :class:`ClaimType`
             'SECONDARY': '', # a :class:`SecondaryCoverage`
             'LOCATION': '', # a :class:`Location`
             'BENEFIT': '', # a :class:`Benefit`
@@ -97,9 +98,9 @@ class TestWS( TestCase ):
         }
         prop_json= json.dumps( properties )
         constraints = {
-            'GENDER': '', # 
-            'AGE-FROM': 0, # 
-            'AGE-TO': 199, # 
+            'GENDER': '', #
+            'AGE-FROM': 0, #
+            'AGE-TO': 199, #
         }
         cons_json= json.dumps( constraints )
         params= {'claim':self.claimText, 'claim_id':'test_load',

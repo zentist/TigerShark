@@ -33,7 +33,7 @@ class TestGenericParsing(unittest.TestCase):
                 list(get_parsers(transaction_set_id, version_tuple))
 
     def test_all_parseable(self):
-        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.iteritems():  # nopep8
+        for (transaction_set_id, version_tuple), name in TEST_FILE_MAP.items():  # nopep8
             with open(os.path.join('tests', name)) as f:
                 contents = f.read().replace('\n', '')
             parser = SimpleParser(transaction_set_id, version_tuple)
@@ -133,13 +133,13 @@ class TestPythonVisitor(unittest.TestCase):
         python = FlatPythonVisitor("parse_278")
         parse_278.visit(python)
         text = python.getSource()
-        exec text
+        exec(text)
 
     def testPythonVisitorWorks(self):
         python = FlatPythonVisitor("parse_278")
         parse_278.visit(python)
         text = python.getSource()
-        exec text
+        exec(text)
         self.assertEqual(type(parse_278), Message)
         msg = parse_278.unmarshall(self.msg1)
         # XXX - check the resulting structure
