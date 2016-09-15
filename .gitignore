@@ -11,3 +11,6 @@ tiger.db
 build
 dist
 MANIFEST
+.cache
+.tox
+*.egg-info
