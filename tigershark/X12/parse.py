@@ -371,7 +371,7 @@ class Properties( object ):
     Each property becomes an attibute of the resulting object.
     """
     def __init__( self, **kw ):
-        self.repr= ",".join( [ "%s=%r" % (k,v,) for k,v in kw.items() ] )
+        self.repr= ",".join(sorted("%s=%r" % (k,v,) for k,v in kw.items()))
         self.__dict__.update( kw )
     def __repr__( self ):
         return "%s(%s)" % (self.__class__.__name__, self.repr,)
