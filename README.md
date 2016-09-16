@@ -1,6 +1,11 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
+Version 0.3.0
+-------------
+
+* Python 3 support, thanks Lucas Wiman!
+
 Version 0.2.9
 -------------
 
