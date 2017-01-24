@@ -252,6 +252,8 @@ Exceptions
 ..  autoclass:: MissingSegment
 """
 import datetime
+import json
+import inspect
 from decimal import Decimal
 
 # Transaction Set ID -> X12 release number -> (facade module, facade name)
@@ -294,6 +296,25 @@ class Facade(object):
     def loops(self, theClass, anX12Message, *args, **kwargs):
         return [theClass(loop, *args, **kwargs) for loop in
                 anX12Message.descendant("loop", theClass.loopName)]
+
+    def to_dict(self):
+        return Facade._to_python_dict(self)
+
+    def to_json(self, **kwargs):
+        return json.dumps(self.to_dict(), **kwargs)
+
+    @staticmethod
+    def _to_python_dict(instance):
+        properties = [x for x in inspect.getmembers(instance) if not x[0].startswith("_")]
+        record = dict()
+        for k, v in properties:
+            if isinstance(v, list):
+                record[k] = [Facade._to_python_dict(x) for x in v]
+            elif type(v) in [int, float, str, bool]:
+                record[k] = v
+            elif isinstance(v, X12LoopBridge) or isinstance(v, X12SegmentBridge) or isinstance(v, Facade):
+                record[k] = Facade._to_python_dict(v)
+        return record
 
 
 class MissingSegment(Exception):
