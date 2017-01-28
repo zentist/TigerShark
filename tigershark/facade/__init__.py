@@ -252,7 +252,11 @@ Exceptions
 ..  autoclass:: MissingSegment
 """
 import datetime
+import json
+import inspect
 from decimal import Decimal
+
+from ..X12.message import X12Structure
 
 # Transaction Set ID -> X12 release number -> (facade module, facade name)
 FACADE_MAP = {
@@ -289,11 +293,40 @@ def get_facade(transaction_set_id, version_tuple):
     return getattr(module, facade_name)
 
 
+def _to_python_dict(instance):
+        properties = [x for x in inspect.getmembers(instance) if not x[0].startswith("_")]
+        record = dict()
+        for k, v in properties:
+            if inspect.ismethod(v) or inspect.isbuiltin(v):
+                pass
+            elif isinstance(v, X12Structure):
+                pass
+            elif isinstance(v, list) or isinstance(v, tuple) or isinstance(v, set):
+                record[k] = [_to_python_dict(x) for x in v]
+            elif type(v) in [int, float, str, bool, type(None)]:
+                record[k] = v
+            elif type(v) is Decimal:
+                record[k] = float(v)
+            elif isinstance(v, datetime.date) or isinstance(v, datetime.time):
+                record[k] = v.isoformat()
+            elif isinstance(v, X12LoopBridge) or isinstance(v, X12SegmentBridge) or isinstance(v, Facade):
+                record[k] = v.to_dict()
+            else:
+                raise TypeError("Cannot parse '{0}'; type is '{1}'".format(k, str(type(v))))
+        return record
+
+
 class Facade(object):
 
     def loops(self, theClass, anX12Message, *args, **kwargs):
         return [theClass(loop, *args, **kwargs) for loop in
                 anX12Message.descendant("loop", theClass.loopName)]
+
+    def to_dict(self):
+        return _to_python_dict(self)
+
+    def to_json(self, **kwargs):
+        return json.dumps(self.to_dict(), **kwargs)
 
 
 class MissingSegment(Exception):
@@ -409,6 +442,12 @@ class X12LoopBridge(object):
             return None
         return X12SegmentBridge(matches[0])
 
+    def to_dict(self):
+        return _to_python_dict(self)
+
+    def to_json(self, **kwargs):
+        return json.dumps(self.to_dict(), **kwargs)
+
 
 class X12SegmentBridge(object):
     """Bridge between a model and an :class:`X12.message.X12Segment`.
@@ -443,6 +482,12 @@ class X12SegmentBridge(object):
         if len(compList) > 0:
             return compList[0]
         return None
+
+    def to_dict(self):
+        return _to_python_dict(self)
+
+    def to_json(self, **kwargs):
+        return json.dumps(self.to_dict(), **kwargs)
 
 
 class SegmentAccess(object):
@@ -981,6 +1026,8 @@ class CompositeAccess(ElementAccess):
                 data.append(self.x12type.x12_to_python(raw))
             else:
                 data.append(raw)
+        if len(data) == 0:
+            return None
         return data[0]
 
     def __set__(self, instance, value):
