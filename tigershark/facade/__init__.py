@@ -293,6 +293,10 @@ def get_facade(transaction_set_id, version_tuple):
     return getattr(module, facade_name)
 
 
+def is_x12_obj(obj):
+    return isinstance(obj, X12LoopBridge) or isinstance(obj, X12SegmentBridge) or isinstance(obj, Facade)
+
+
 def _to_python_dict(instance):
         properties = [x for x in inspect.getmembers(instance) if not x[0].startswith("_")]
         record = dict()
@@ -302,7 +306,10 @@ def _to_python_dict(instance):
             elif isinstance(v, X12Structure):
                 pass
             elif isinstance(v, list) or isinstance(v, tuple) or isinstance(v, set):
-                record[k] = [_to_python_dict(x) for x in v]
+                if len(v) > 0 and is_x12_obj(v[0]):
+                    record[k] = [_to_python_dict(x) for x in v]
+                else:
+                    record[k] = v
             elif type(v) in [int, float, str, bool, type(None)]:
                 record[k] = v
             elif type(v) is Decimal:
