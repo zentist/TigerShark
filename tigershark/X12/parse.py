@@ -677,7 +677,7 @@ class Segment( Parser ):
         """If this segment matches the next segment token in the input,
         create the X12Segment object.
         :param segments: list of SegmentTokens for the current message.
-        :returns: yields a single parsed Segment or raises StopIteration
+        :returns: yields a single parsed Segment or ends iteration (Yields)
         """
         if isinstance(self.repeat, int):
             length_loop = range(self.repeat)
@@ -694,7 +694,7 @@ class Segment( Parser ):
                 theSegment= self.theFactory.makeSegment( segments.pop(0), compPunct, self )
                 yield theSegment
             elif not required:
-                raise StopIteration
+                return
             else:
                 error= ParseError(
                     "Could not unmarshall {seg_name} Segment, "\
@@ -741,7 +741,7 @@ class Loop( Parser ):
         loops until a segment no longer matches.
 
         :param segments: list of SegmentToken instances
-        :returns: Yields the next X12.message.X12Loop structure or raises StopIteration
+        :returns: Yields the next X12.message.X12Loop structure or ends interation (returns)
         """
         # Confirm match between this loop and a segment of the structure
         i = 0
@@ -765,7 +765,7 @@ class Loop( Parser ):
                 i += 1
             else:
                 # Nothing left to check, so stop the iteration
-                raise StopIteration
+                return
 
     def match( self, candidate ):
         return self.structure[0].match( candidate )
