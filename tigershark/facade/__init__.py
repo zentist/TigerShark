@@ -256,7 +256,7 @@ import json
 import inspect
 from decimal import Decimal
 
-from ..X12.message import X12Structure
+from ..X12.message import X12Structure, X12Message
 
 # Transaction Set ID -> X12 release number -> (facade module, facade name)
 FACADE_MAP = {
@@ -293,27 +293,171 @@ def get_facade(transaction_set_id, version_tuple):
     return getattr(module, facade_name)
 
 
-def _to_python_dict(instance):
-        properties = [x for x in inspect.getmembers(instance) if not x[0].startswith("_")]
-        record = dict()
-        for k, v in properties:
-            if inspect.ismethod(v) or inspect.isbuiltin(v):
-                pass
-            elif isinstance(v, X12Structure):
-                pass
-            elif isinstance(v, list) or isinstance(v, tuple) or isinstance(v, set):
-                record[k] = [_to_python_dict(x) for x in v]
-            elif type(v) in [int, float, str, bool, type(None)]:
-                record[k] = v
-            elif type(v) is Decimal:
-                record[k] = float(v)
-            elif isinstance(v, datetime.date) or isinstance(v, datetime.time):
-                record[k] = v.isoformat()
-            elif isinstance(v, X12LoopBridge) or isinstance(v, X12SegmentBridge) or isinstance(v, Facade):
-                record[k] = v.to_dict()
+def extract_position(pos):
+    if type(pos) is Position:
+        return pos.position
+    elif type(pos) is OneOf:
+        return {
+            "value": pos.value,
+            "oneOf": [extract_position(x) for x in pos.posPairSeq]
+        }
+    elif type(pos) is SequenceOf:
+        return {
+            "start": pos.start,
+            "end": pos.end
+        }
+    else:
+        return pos
+
+
+def extract_element_value(instance, attribute):
+    if attribute not in type(instance).__dict__:
+        return None
+
+    extract_from_types = (
+        ElementAccess,
+        SegmentAccess,
+        CompositeAccess,
+        SegmentSequenceAccess,
+        ElementSequenceAccess,
+    )
+
+    value = getattr(instance, attribute)
+    if isinstance(value, tuple) and len(value) == 2 and all([type(value) is str for x in value]):
+        value = {
+            "code": value[0],
+            "label": value[1]
+        }
+    else:
+        value = _to_python_dict(value)
+
+    class_prop = type(instance).__dict__[attribute]
+
+    if not any([isinstance(class_prop, x) for x in extract_from_types]):
+        return  None
+
+    output = {
+        "name": attribute,
+        "valueType": class_prop.__class__.__name__
+    }
+
+    extract_props = (
+        "segment",
+        "qualifier",
+        "x12type",
+        "position",
+        "compPosition",
+        "qualPos",
+        "inList",
+        "notInList"
+    )
+    for prop in extract_props:
+        if not hasattr(class_prop, prop):
+            continue
+        prop_val = getattr(class_prop, prop)
+        if prop == "x12type":
+            if hasattr(prop_val, "__name__") and not any([isinstance(prop_val, x) for x in (X12LoopBridge, X12SegmentBridge, Facade)]) and hasattr(prop_val, "to_dict"):  # isinstance(prop_val, Conversion):
+                prop_val = prop_val.to_dict()
             else:
-                raise TypeError("Cannot parse '{0}'; type is '{1}'".format(k, str(type(v))))
-        return record
+                prop_val = str(prop_val)
+            output[prop] = prop_val
+        elif isinstance(prop_val, Position):
+            output[prop] = extract_position(prop_val)
+        elif any([isinstance(prop_val, x) for x in extract_from_types]):
+            output[prop] = extract_element_value(class_prop, prop)
+        else:
+            output[prop] = str(prop_val)  # _to_python_dict(prop_val)
+
+    return value
+
+    # return {
+    #     "value": value,
+    #     "meta": output
+    # }
+
+
+def _to_python_dict(instance):
+    from tigershark.X12.message import X12Loop, X12Message, X12Segment, X12Structure
+    import datetime
+    import types
+
+    extract_from_types = (
+        ElementAccess,
+        SegmentAccess,
+        CompositeAccess,
+        SegmentSequenceAccess,
+        ElementSequenceAccess,
+    )
+
+    if type(instance) in [int, float, str, bool, type(None)]:
+        return instance
+    elif type(instance) is Decimal:
+        return float(instance)
+    elif isinstance(instance, datetime.date) or isinstance(instance, datetime.time):
+        return instance.isoformat()
+    elif type(instance) is datetime.timedelta:
+        return {
+            "days": instance.days,
+            "seconds": instance.seconds,
+        }
+    elif isinstance(instance, list) or isinstance(instance, tuple) or isinstance(instance, set):
+        if isinstance(instance, tuple) and len(instance) == 2 and all([type(x) is str for x in instance]):
+            return {
+                "code": instance[0],
+                "label": instance[1]
+            }
+        else:
+            return [_to_python_dict(x) for x in instance]
+    elif inspect.ismethod(instance) or inspect.isbuiltin(instance) or isinstance(instance, types.FunctionType) or isinstance(instance, property):
+        return None
+
+    properties = [x for x in inspect.getmembers(instance) if not x[0].startswith("_")]
+    record = dict()
+
+    check_types = [X12Loop, X12Message, X12Segment, X12Structure, X12LoopBridge, X12SegmentBridge]
+    match_types = [x.__name__ for x in check_types if isinstance(instance, x)]
+    if len(match_types) > 0:
+        if type(instance.__class__.__name__) not in match_types:
+            match_types.append(instance.__class__.__name__)
+        # record["_type"] = instance.__class__.__name__
+        # record["_types"] = match_types
+
+    for k, v in properties:
+        if any([isinstance(instance, x) for x in (X12LoopBridge, X12SegmentBridge, Facade)]):
+            element_value = extract_element_value(instance, k)
+            if element_value is not None:
+                record[k] = element_value
+                continue
+        if type(v) in [int, float, str, bool, type(None)]:
+            record[k] = v
+        elif type(v) is datetime.timedelta:
+            record[k] = {
+                "days": v.days,
+                "seconds": v.seconds,
+            }
+        elif inspect.ismethod(v) or inspect.isbuiltin(v) or isinstance(v, types.FunctionType) or isinstance(v, property):
+            pass
+        elif isinstance(v, X12Structure):
+            pass
+        elif isinstance(v, list) or isinstance(v, tuple) or isinstance(v, set):
+            if isinstance(v, tuple) and len(v) == 2 and all([type(x) is str for x in v]):
+                record[k] = {
+                    "code": v[0],
+                    "label": v[1]
+                }
+            else:
+                record[k] = [_to_python_dict(x) for x in v]
+        elif type(v) is Decimal:
+            record[k] = float(v)
+        elif isinstance(v, datetime.date) or isinstance(v, datetime.time):
+            record[k] = v.isoformat()
+        elif isinstance(v, X12LoopBridge) or isinstance(v, X12SegmentBridge) or isinstance(v, Facade):
+            record[k] = v.to_dict()
+        elif any([isinstance(v, x) for x in extract_from_types]):
+            record[k] = extract_element_value(instance, k)
+        else:
+            raise TypeError("Cannot parse '{0}'; type is '{1}'".format(k, str(type(v))))
+    return record
 
 
 class Facade(object):
@@ -1095,6 +1239,10 @@ class Conversion(object):
     This is the abstract superclass for all conversions.
     """
     @staticmethod
+    def to_dict():
+        return NotImplemented
+
+    @staticmethod
     def x12_to_python(raw):
         return NotImplemented
 
@@ -1105,6 +1253,10 @@ class Conversion(object):
 
 class TM(Conversion):
     """Convert between TM format time to proper datetime.time objects."""
+    @staticmethod
+    def to_dict():
+        return {"type": "time"}
+
     @staticmethod
     def x12_to_python(raw):
         if raw is None or raw == "":
@@ -1134,6 +1286,10 @@ class TM(Conversion):
 class D8(Conversion):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
+    def to_dict():
+        return {"type": "datetime"}
+
+    @staticmethod
     def x12_to_python(raw):
         if raw is None:
             return raw
@@ -1153,6 +1309,9 @@ class D8(Conversion):
 
 class DR(Conversion):
     """Convert between DR format dates to proper DateTime objects."""
+    @staticmethod
+    def to_dict():
+        return {"type": "datetime"}
     @staticmethod
     def x12_to_python(raw):
         if raw is None or raw == "":
@@ -1182,6 +1341,11 @@ class SegmentConversion(Conversion):
     def __init__(self, someClass):
         self.someClass = someClass
 
+    def to_dict(self):
+        return {
+            "type": self.someClass.__name__,
+        }
+
     def x12_to_python(self, raw):
         return self.someClass(raw)
 
@@ -1190,6 +1354,10 @@ class SegmentConversion(Conversion):
 
 
 class XDecimal(Conversion):
+    @staticmethod
+    def to_dict():
+        return {"type": "float"}
+
     @staticmethod
     def x12_to_python(raw):
         if raw == "" or raw is None:
@@ -1242,6 +1410,10 @@ def enum(options, raw_unknowns=False):
     """
     class Enum(Conversion):
         @staticmethod
+        def to_dict():
+            return {"type": "enum", "options": options}
+
+        @staticmethod
         def x12_to_python(raw):
             if raw == "" or raw is None:
                 return None
@@ -1270,6 +1442,10 @@ def enum(options, raw_unknowns=False):
 def boolean(match):
     """ True if the field matches match. Match must be a string. """
     class Boolean(Conversion):
+        @staticmethod
+        def to_dict():
+            return {"type": "bool", "match": match}
+
         @staticmethod
         def x12_to_python(raw):
             return raw == match
