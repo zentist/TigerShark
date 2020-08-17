@@ -256,7 +256,7 @@ import json
 import inspect
 from decimal import Decimal
 
-from ..X12.message import X12Structure, X12Message
+from ..X12.message import X12Structure
 
 # Transaction Set ID -> X12 release number -> (facade module, facade name)
 FACADE_MAP = {
@@ -374,6 +374,10 @@ def extract_element_value(instance, attribute):
     #     "value": value,
     #     "meta": output
     # }
+
+
+def is_x12_obj(obj):
+    return isinstance(obj, X12LoopBridge) or isinstance(obj, X12SegmentBridge) or isinstance(obj, Facade)
 
 
 def _to_python_dict(instance):
