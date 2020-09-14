@@ -24,7 +24,7 @@ class TestJSONFunction(unittest.TestCase):
             parsed = m.unmarshall(f.read().strip())
         f = f271.F271_4010(parsed)
         try:
-             f.to_json()
+            f.to_json()
         except TypeError:
             self.fail(".to_json() raised TypeError")
 
