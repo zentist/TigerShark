@@ -41,15 +41,24 @@ class TestJSONFunction(unittest.TestCase):
 
         subscriber = source["receivers"][0]["subscribers"][0]
         self.assertEqual(subscriber["personal_information"]["name"]["first_name"], "JANET")
-        self.assertEqual(subscriber["personal_information"]["demographic_information"]["gender"], ("F", "Female"))
+        self.assertEqual(
+            subscriber["personal_information"]["demographic_information"]["gender"],
+            {"code": "F", "label": "Female"}
+        )
 
         elig_info = subscriber["eligibility_or_benefit_information"]
         self.assertEqual(len(elig_info), 109)
 
         benefit = elig_info[14]
         self.assertEqual(benefit["coverage_information"]["benefit_amount"], 1500)
-        self.assertEqual(benefit["coverage_information"]["coverage_level"], ("IND", "Individual"))
-        self.assertEqual(benefit["coverage_information"]["information_type"], ("G", "Out of Pocket (Stop Loss)"))
+        self.assertEqual(
+            benefit["coverage_information"]["coverage_level"],
+            {"code": "IND", "label": "Individual"}
+        )
+        self.assertEqual(
+            benefit["coverage_information"]["information_type"],
+            {"code": "G", "label": "Out of Pocket (Stop Loss)"}
+        )
 
     def test_json_835_5010(self):
         m = M835_5010_X221_A1.parsed_835
@@ -70,6 +79,7 @@ class TestJSONFunction(unittest.TestCase):
             f.to_json()
         except TypeError:
             self.fail(".to_json() raised TypeError")
+
 
 if __name__ == "__main__":
     logging.basicConfig(

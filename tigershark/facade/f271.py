@@ -156,8 +156,8 @@ class Message(X12LoopBridge):
     message_text = ElementAccess("MSG", 1)
 
 
-class EligibilityOrBenefitPlaceOfService(X12LoopBridge):
-    location_limits = CompositeAccess("III", "ZZ", 2, x12type=enum(place_of_service))
+class EligibilityOrBenefitAdditionalInformation(X12LoopBridge):
+    additional_information = CompositeAccess("III", "ZZ", 2, x12type=enum(place_of_service))
 
 
 class Subscriber(Facade, X12LoopBridge):
@@ -223,7 +223,7 @@ class Subscriber(Facade, X12LoopBridge):
         request_validations = SegmentSequenceAccess("AAA",
                 x12type=SegmentConversion(RequestValidation))
         messages = ElementSequenceAccess("MSG", 1)
-        location_limits = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
+        additional_information = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
 
         class _AdditionalInformation(X12LoopBridge):
             loopName = "2115C"
@@ -310,7 +310,7 @@ class Dependent(Facade, X12LoopBridge):
         request_validations = SegmentSequenceAccess("AAA",
                 x12type=SegmentConversion(RequestValidation))
         messages = ElementSequenceAccess("MSG", 1)
-        location_limits = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
+        additional_information = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
 
         class _AdditionalInformation(X12LoopBridge):
             loopName = "2115C"
