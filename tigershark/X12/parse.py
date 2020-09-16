@@ -402,7 +402,7 @@ class Parser( object ):
     Message parsing breaks the source message down into
     a flat list of segment tokens.  Then the structure defined
     by Segment, Element and Loop is imposed on those segment tokens.
-    to build the X12Message from X12Loop and X12Segment.
+    to build the X12Message from tigershark.X12Loop and X12Segment.
 
     There are several properties:
 

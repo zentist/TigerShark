@@ -1316,6 +1316,7 @@ class DR(Conversion):
     @staticmethod
     def to_dict():
         return {"type": "datetime"}
+
     @staticmethod
     def x12_to_python(raw):
         if raw is None or raw == "":
