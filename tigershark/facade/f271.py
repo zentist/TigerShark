@@ -15,6 +15,7 @@ from tigershark.facade.enums.common import delivery_or_calendar_pattern_code
 from tigershark.facade.enums.common import delivery_time_pattern_code
 from tigershark.facade.enums.common import quantity_qualifier
 from tigershark.facade.enums.common import time_period_qualifier
+from tigershark.facade.enums.common import place_of_service
 from tigershark.facade.enums.eligibility import coverage_level
 from tigershark.facade.enums.eligibility import eligibility_or_benefit_code
 from tigershark.facade.enums.eligibility import insurance_type
@@ -155,6 +156,10 @@ class Message(X12LoopBridge):
     message_text = ElementAccess("MSG", 1)
 
 
+class EligibilityOrBenefitAdditionalInformation(X12LoopBridge):
+    additional_information = CompositeAccess("III", "ZZ", 2, x12type=enum(place_of_service))
+
+
 class Subscriber(Facade, X12LoopBridge):
     """The person uniquely identified by the Source.
 
@@ -218,6 +223,7 @@ class Subscriber(Facade, X12LoopBridge):
         request_validations = SegmentSequenceAccess("AAA",
                 x12type=SegmentConversion(RequestValidation))
         messages = ElementSequenceAccess("MSG", 1)
+        additional_information = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
 
         class _AdditionalInformation(X12LoopBridge):
             loopName = "2115C"
@@ -304,6 +310,7 @@ class Dependent(Facade, X12LoopBridge):
         request_validations = SegmentSequenceAccess("AAA",
                 x12type=SegmentConversion(RequestValidation))
         messages = ElementSequenceAccess("MSG", 1)
+        additional_information = ElementSequenceAccess("III", 2, x12type=enum(place_of_service))
 
         class _AdditionalInformation(X12LoopBridge):
             loopName = "2115C"

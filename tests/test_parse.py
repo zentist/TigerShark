@@ -54,8 +54,8 @@ class TestStructure(unittest.TestCase):
             Message("bad", Properties(desc="bad")))
 
     def testMessage(self):
-        self.assertEquals(parse_278, loop2000F.message)
-        self.assertEquals("278", loop2000A.message.name)
+        self.assertEqual(parse_278, loop2000F.message)
+        self.assertEqual("278", loop2000A.message.name)
 
 
 class TestSegmentMatch(unittest.TestCase):
@@ -87,14 +87,14 @@ class TestParse278_13(unittest.TestCase):
 
     def testTokenize(self):
         _, _, _, tokens = parse_278.tokenize(self.msg1)
-        self.assertEquals(28, len(tokens))
-        self.assertEquals(17, len(tokens[0]))  # The ISA Segment
-        self.assertEquals("ISA", tokens[0][0])
-        self.assertEquals("GS", tokens[1][0])
-        self.assertEquals("ST", tokens[2][0])
-        self.assertEquals("SE", tokens[-3][0])
-        self.assertEquals("GE", tokens[-2][0])
-        self.assertEquals("IEA", tokens[-1][0])
+        self.assertEqual(28, len(tokens))
+        self.assertEqual(17, len(tokens[0]))  # The ISA Segment
+        self.assertEqual("ISA", tokens[0][0])
+        self.assertEqual("GS", tokens[1][0])
+        self.assertEqual("ST", tokens[2][0])
+        self.assertEqual("SE", tokens[-3][0])
+        self.assertEqual("GE", tokens[-2][0])
+        self.assertEqual("IEA", tokens[-1][0])
 
     def testISAMatch(self):
         _, _, _, tokens = parse_278.tokenize(self.msg1)
@@ -104,7 +104,7 @@ class TestParse278_13(unittest.TestCase):
 
     def testParse(self):
         message = parse_278.unmarshall(self.msg1)
-        self.assertEquals(self.msg1, message.marshall())
+        self.assertEqual(self.msg1, message.marshall())
 
 
 class TestVisitor1(unittest.TestCase):
@@ -143,7 +143,7 @@ class TestPythonVisitor(unittest.TestCase):
         self.assertEqual(type(parse_278), Message)
         msg = parse_278.unmarshall(self.msg1)
         # XXX - check the resulting structure
-        self.assertEquals(self.msg1, msg.marshall())
+        self.assertEqual(self.msg1, msg.marshall())
 
 
 class TestSQLVisitor(unittest.TestCase):

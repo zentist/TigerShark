@@ -39,11 +39,13 @@ from tigershark import X12_4010_X094A1
 from tigershark import X12_4010_X096A1
 from tigershark import X12_4010_X098A1
 from tigershark import X12_5010_X221A1
+from tigershark import X12_5010_X279A1
 
 # (Transaction Set, X12VersionTuple) -> test file name
 TEST_FILE_MAP = {
     ('271', X12_4010_X092A1): '271-dependent-benefits.txt',
     ('271', X12_4010_X092A1): '271-example-2.txt',
+    ('271', X12_5010_X279A1): '271-example-3.txt',
     ('271', X12_4010_X092A1): '271-example-dependent-rejection.txt',
     ('271', X12_4010_X092A1): '271-example.txt',
     ('271', X12_4010_X092A1): '271-related-entity.txt',

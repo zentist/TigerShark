@@ -1,6 +1,14 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
+Version 0.3.2
+-------------
+
+* Support for EligibilityOrBenefitAdditionalInformation - `additional_information` property added to EligibilityOrBenefit to handle `III*ZZ*` segments
+* Adds `place_of_service` enum for corresponding `additional_information` property
+* Cleans up unittest warnings (`assertEquals` replaced with `assertEqual`)
+* More descriptive and reliable `.to_dict` and `.to_json` methods.
+
 Version 0.3.1
 -------------
 
@@ -246,6 +254,13 @@ the tests that currently exist, run the following in the current directory.
 
 ```sh
 python -m unittest discover
+```
+
+To limit tests to the `tests` directory (ignoring all tests in the `web` directory), run the following:
+
+
+```sh
+python -m unittest discover -s 'tests'
 ```
 
 Note that if you first `cd tests` and then run the unit tests, they will fail

@@ -60,9 +60,9 @@ class TestWS( unittest.TestCase ):
         result= response.read()
         #print( result )
         self.client.close()
-        self.assertEquals( "CREATED", response.reason )
+        self.assertEqual( "CREATED", response.reason )
         object= json.loads(result)
-        self.assertEquals( claimId, object['claim_id'] )
+        self.assertEqual( claimId, object['claim_id'] )
     def test_02_Fetch( self ):
         claimId= self.claimDict["CLAIM-ID"]
         self.client.request( 'GET', "/claim/{0}/".format(claimId), headers=self.headers )
@@ -70,8 +70,8 @@ class TestWS( unittest.TestCase ):
         result= response.read()
         self.client.close()
         object= json.loads(result)
-        self.assertEquals( "OK", response.reason )
-        self.assertEquals( self.claimText, object['claim'] )
+        self.assertEqual( "OK", response.reason )
+        self.assertEqual( self.claimText, object['claim'] )
     def test_03_Fetch( self ):
         claimId= '837_example'
         self.client.request( 'GET', "/claim_837/{0}/".format(claimId), headers=self.headers )
@@ -80,7 +80,7 @@ class TestWS( unittest.TestCase ):
         self.client.close()
         object= json.loads(result)
         #print( result )
-        self.assertEquals( "OK", response.reason )
+        self.assertEqual( "OK", response.reason )
         print( object['claim'] )
 
 def setUpModule():
