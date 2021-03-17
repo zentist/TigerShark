@@ -236,6 +236,8 @@ class Claim(Facade, X12LoopBridge):
         end_date = ElementAccess("DTM", 2, qualifier=(1, "151"), x12type=D8)
         service_date = ElementAccess(
             "DTM", 2, qualifier=(1, "472"), x12type=D8)
+        received_date = ElementAccess(
+            "DTM", 2, qualifier=(1, "050"), x12type=D8)
 
         # Identification
         apg_number = ElementAccess("REF", 2, qualifier=(1, "1S"))
