@@ -677,7 +677,7 @@ class Segment( Parser ):
         """If this segment matches the next segment token in the input,
         create the X12Segment object.
         :param segments: list of SegmentTokens for the current message.
-        :returns: yields a single parsed Segment or ends iteration (Yields)
+        :returns: yields a single parsed Segment or ends iteration (returns)
         """
         if isinstance(self.repeat, int):
             length_loop = range(self.repeat)
