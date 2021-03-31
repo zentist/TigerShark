@@ -30,30 +30,30 @@ class TestNavigationX12(unittest.TestCase):
 
     def testChild(self):
         loops = self.message.child("LOOP")
-        self.assertEquals(1, len(loops))
+        self.assertEqual(1, len(loops))
         segs = self.message.child("SEGMENT")
-        self.assertEquals(0, len(segs))
+        self.assertEqual(0, len(segs))
         isaList = self.message.child("LOOP", name="ISA")
-        self.assertEquals(1, len(isaList))
+        self.assertEqual(1, len(isaList))
         ieaList = isaList[0].child("SEGMENT", name="IEA")
-        self.assertEquals(1, len(ieaList))
+        self.assertEqual(1, len(ieaList))
 
     def testDescendant(self):
         geList = self.message.descendant("SEGMENT", name="GE")
-        self.assertEquals(1, len(geList))
+        self.assertEqual(1, len(geList))
 
     def testParent(self):
         geList = self.message.descendant("SEGMENT", name="GE")
-        self.assertEquals(1, len(geList))
+        self.assertEqual(1, len(geList))
         ge = geList[0]
-        self.assertEquals(0, len(ge.parent("SEGMENT")))
+        self.assertEqual(0, len(ge.parent("SEGMENT")))
         parentList = ge.parent("LOOP")
-        self.assertEquals(1, len(parentList))
-        self.assertEquals("GS", parentList[0].name)
+        self.assertEqual(1, len(parentList))
+        self.assertEqual("GS", parentList[0].name)
 
     def testAncestor(self):
         geList = self.message.descendant("SEGMENT", name="GE")
-        self.assertEquals(1, len(geList))
+        self.assertEqual(1, len(geList))
         ge = geList[0]
         isaList = ge.ancestor("LOOP", name="ISA")
-        self.assertEquals(1, len(isaList))
+        self.assertEqual(1, len(isaList))

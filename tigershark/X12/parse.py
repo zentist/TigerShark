@@ -402,7 +402,7 @@ class Parser( object ):
     Message parsing breaks the source message down into
     a flat list of segment tokens.  Then the structure defined
     by Segment, Element and Loop is imposed on those segment tokens.
-    to build the X12Message from X12Loop and X12Segment.
+    to build the X12Message from tigershark.X12Loop and X12Segment.
 
     There are several properties:
 
@@ -513,10 +513,14 @@ class Parser( object ):
         """
         for part in self.structure:
             count= 0
-            for subloop in part.parse( segments ):
-                subloop.occurrence= count
-                theLoop.addChild( subloop )
-                count += 1
+            segment_parts = part.parse( segments )
+            try:
+                for subloop in segment_parts:
+                    subloop.occurrence= count
+                    theLoop.addChild( subloop )
+                    count += 1
+            except StopIteration:
+                return
     def visit( self, visitor, indent=0 ):
         """Iterate through the components."""
         try:
@@ -756,7 +760,10 @@ class Loop( Parser ):
                     structure=[s.name for s in self.structure]))
                 theLoop = self.theFactory.makeLoop(self.name)
                 self.getParts(segments, theLoop)
-                yield theLoop
+                try:
+                    yield theLoop
+                except StopIteration:
+                    return                
             elif self.structure[i].situational and \
                     segments[0][0] in [s.name for s in self.structure]:
                 # Absence of a situational segment shouldn't exit

@@ -28,6 +28,38 @@ class TestJSONFunction(unittest.TestCase):
         except TypeError:
             self.fail(".to_json() raised TypeError")
 
+    def test_json_271_segments(self):
+        m = M271_4010_X092_A1.parsed_271
+        with open('tests/271-example-2.txt') as f:
+            parsed = m.unmarshall(f.read().strip())
+        f = f271.F271_4010(parsed)
+        js_data = f.to_dict()
+        self.assertEqual(js_data["transaction_set_identifier_code"], "271")
+
+        source = js_data["facades"][0]["source"]
+        self.assertEqual(source["loopName"], "2000A")
+
+        subscriber = source["receivers"][0]["subscribers"][0]
+        self.assertEqual(subscriber["personal_information"]["name"]["first_name"], "JANET")
+        self.assertEqual(
+            subscriber["personal_information"]["demographic_information"]["gender"],
+            {"code": "F", "label": "Female"}
+        )
+
+        elig_info = subscriber["eligibility_or_benefit_information"]
+        self.assertEqual(len(elig_info), 109)
+
+        benefit = elig_info[14]
+        self.assertEqual(benefit["coverage_information"]["benefit_amount"], 1500)
+        self.assertEqual(
+            benefit["coverage_information"]["coverage_level"],
+            {"code": "IND", "label": "Individual"}
+        )
+        self.assertEqual(
+            benefit["coverage_information"]["information_type"],
+            {"code": "G", "label": "Out of Pocket (Stop Loss)"}
+        )
+
     def test_json_835_5010(self):
         m = M835_5010_X221_A1.parsed_835
         with open('tests/5010-835-example-1.txt') as f:
@@ -47,6 +79,7 @@ class TestJSONFunction(unittest.TestCase):
             f.to_json()
         except TypeError:
             self.fail(".to_json() raised TypeError")
+
 
 if __name__ == "__main__":
     logging.basicConfig(
