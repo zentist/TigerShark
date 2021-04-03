@@ -1,6 +1,14 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
+Version 0.3.3
+-------------
+
+* Adds `in_plan_network_type` to `EligibilityOrBenefitInformation` for explicit values
+* Adds `out_of_plan_network` for completion's sake
+* Note that `in_plan_network`, `out_of_plan_network`, and `both_in_out_network` all return `False` when no value is set, although `None` would probably be more appropriate
+* It may be more intuitive if `in_plan_network` and `out_of_plan_network` returned `True` when `both_in_out_network` is `True`, but the behavior is preserved for backwards compatibility
+
 Version 0.3.2
 -------------
 
