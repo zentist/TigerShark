@@ -2,7 +2,7 @@
 TigerShark - An X12 EDI message parser.
 """
 __all__ = ['X12VersionTuple']
-__version__ = "0.3.3"
+__version__ = "0.3.4"
 __authors__ = [
     "Steven Buss <steven.buss@gmail.com>",
     "Steven Lott <slott56@gmail.com>",
