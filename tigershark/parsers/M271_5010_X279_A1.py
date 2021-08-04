@@ -882,7 +882,7 @@ parsed_271_2115C = Loop(
     Segment(
         u'LS',
         Properties(
-            syntax='', position=u'3300', req_sit=u'S', repeat=u'1', desc=u'Loop Header'),
+            syntax='', position=u'2650', req_sit=u'S', repeat=u'1', desc=u'Loop Header'),
         Element(
             u'LS01', Properties(
                 desc=u'Loop Identifier Code', req_sit=u'R',
@@ -1334,6 +1334,18 @@ parsed_271_2110C = Loop(
                 codes=[])
         ),
     ),
+    Segment(
+        u'LS',
+        Properties(
+            syntax='', position=u'3300', req_sit=u'S', repeat=u'1', desc=u'Loop Header'),
+        Element(
+            u'LS01', Properties(
+                desc=u'Loop Identifier Code', req_sit=u'R',
+                data_type=(u'AN', u'1', u'4'), position=1,
+                codes=[u'2120'])
+        ),
+    ),
+    parsed_271_2120C,
 )
 parsed_271_2100C = Loop(
     u'2100C',
@@ -3237,6 +3249,18 @@ parsed_271_2110D = Loop(
                 codes=[])
         ),
     ),
+    Segment(
+        u'LS',
+        Properties(
+            syntax='', position=u'2700', req_sit=u'S', repeat=u'1', desc=u'Loop Header'),
+        Element(
+            u'LS01', Properties(
+                desc=u'Loop Identifier Code', req_sit=u'R',
+                data_type=(u'AN', u'1', u'4'), position=1,
+                codes=[u'2120'])
+        ),
+    ),
+    parsed_271_2120D,
 )
 parsed_271_2100D = Loop(
     u'2100D',
