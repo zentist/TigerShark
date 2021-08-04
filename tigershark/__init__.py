@@ -7,6 +7,7 @@ __authors__ = [
     "Steven Buss <steven.buss@gmail.com>",
     "Steven Lott <slott56@gmail.com>",
     "Dave Peticolas <dave.peticolas@gmail.com>",
+    "Cloud Cray <cloudcray@gmail.com>",
 ]
 
 from collections import namedtuple

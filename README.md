@@ -5,15 +5,19 @@ a specific partner in the health care payment ecosystem.
 Version 0.3.4
 -------------
 
-This patch cleans up the X12 271 Service Type Codes to bring them in line with current use.
+This patch cleans up the X12 271 Service Type Codes to bring them in line with current use. This patch also includes 
+parsers for the 5010 versions of Professional (X222A1) and Institutional (X223A1) 837 transactions.
 * Updates `enums.eligibility.service_type_codes` to include new and missing Service Type Codes
 * Adds `enums.eligibility.deprecated_service_type_codes`, a tuple of service type codes that have been deprecated by 
   X12
+* Adds `X12_5010_X222A1` and `X12_5010_X223A1` parsers for 837 5010 messages
+* This does NOT add or update any facades related to 837 transactions (existing 837 facades only function for 4010 
+  messages)
   
-Since then, 21 Service Type Codes have been added since `service_type_codes` was last updated in June 2012, 7 of which 
-have already been deprecated.
+The `service_type_codes` dict was last updated in June 2012. Since then, 21 Service Type Codes have been added, 
+7 of which have already been deprecated.
 
-Including the 7 in this patch, 13 Service Type Codes have been deprecated by X12. All 13 have been 
+13 Service Type Codes have been deprecated by X12 (including 7 added in this patch). All 13 have been 
 preserved in `service_type_codes`, as this module may be used to parse existing/old 271 responses. The 
 `deprecated_service_type_codes` tuple has been added as a helper to identify which codes are considered inactive.
 
