@@ -1,21 +1,27 @@
-from tigershark import X12_4010_X061A1
-from tigershark import X12_4010_X070
-from tigershark import X12_4010_X091A1
-from tigershark import X12_4010_X092A1
-from tigershark import X12_4010_X093A1
-from tigershark import X12_4010_X094A1
-from tigershark import X12_4010_X095A1
-from tigershark import X12_4010_X096A1
-from tigershark import X12_4010_X097A1
-from tigershark import X12_4010_X098A1
-from tigershark import X12_4010_XXXC
-from tigershark import X12_5010_X221A1
-from tigershark import X12_5010_X279A1
+from tigershark import (
+    X12_4010_X061A1,
+    X12_4010_X070,
+    X12_4010_X091A1,
+    X12_4010_X092A1,
+    X12_4010_X093A1,
+    X12_4010_X094A1,
+    X12_4010_X095A1,
+    X12_4010_X096A1,
+    X12_4010_X097A1,
+    X12_4010_X098A1,
+    X12_4010_XXXC,
+    X12_5010_X221A1,
+    X12_5010_X279A1,
+    X12_5010_X222A1,
+    X12_5010_X223A1,
+)
 from tigershark.extras import standardSegment
-from tigershark.X12.parse import Loop
-from tigershark.X12.parse import Message
-from tigershark.X12.parse import ParseError
-from tigershark.X12.parse import Properties
+from tigershark.X12.parse import (
+    Loop,
+    Message,
+    ParseError,
+    Properties
+)
 
 # Transaction Set ID -> X12VersionTuple -> [(parser module, parser name)]
 PARSER_MAP = {
@@ -54,6 +60,8 @@ PARSER_MAP = {
         X12_4010_X096A1: [('M837_4010_X096_A1', 'parsed_837')],
         X12_4010_X097A1: [('M837_4010_X097_A1', 'parsed_837')],
         X12_4010_X098A1: [('M837_4010_X098_A1', 'parsed_837')],
+        X12_5010_X222A1: [('M837_5010_X222_A1', 'parsed_837')],  # Professional Claims
+        X12_5010_X223A1: [('M837_5010_X223_A1', 'parsed_837')],  # Institutional Claims
     },
     '841': {
         X12_4010_XXXC: [('M841_4010_XXXC', 'parsed_841')],
