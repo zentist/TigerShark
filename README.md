@@ -1,6 +1,61 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
+
+Version 0.3.4
+-------------
+
+This patch cleans up the X12 271 Service Type Codes to bring them in line with current use. This patch also includes 
+parsers for the 5010 versions of Professional (X222A1) and Institutional (X223A1) 837 transactions.
+* Updates `enums.eligibility.service_type_codes` to include new and missing Service Type Codes
+* Adds `enums.eligibility.deprecated_service_type_codes`, a tuple of service type codes that have been deprecated by 
+  X12
+* Adds `X12_5010_X222A1` and `X12_5010_X223A1` parsers for 837 5010 messages
+* This does NOT add or update any facades related to 837 transactions (existing 837 facades only function for 4010 
+  messages)
+  
+The `service_type_codes` dict was last updated in June 2012. Since then, 21 Service Type Codes have been added, 
+7 of which have already been deprecated.
+
+13 Service Type Codes have been deprecated by X12 (including 7 added in this patch). All 13 have been 
+preserved in `service_type_codes`, as this module may be used to parse existing/old 271 responses. The 
+`deprecated_service_type_codes` tuple has been added as a helper to identify which codes are considered inactive.
+
+Note: the code `EO` ("ECHO-OSCAR") appears to have been added in error temporarily as a duplicate of `E0` 
+("ECHO-ZERO") for a 4-month span in 2017. The code has been added back in on the chance it made its way into 
+any production systems.
+
+New Service Type Codes:
+
+| Code | Label | Date Added | Date Deprecated |
+| ---  | ---   | ---        | --- |
+| E29 | Technical Cardiac Rehabilitation Services Component | 09/30/2012 | 07/01/2016 |
+| E30 | Professional Cardiac Rehabilitation Services Component | 09/30/2012 | 07/01/2016 |
+| E31 | Professional Intensive Cardiac Rehabilitation Services Component | 09/30/2012 | 07/01/2016 |
+| E32 | Intensive Cardiac Rehabilitation - Technical Component | 06/02/2013 | 05/01/2017 |
+| E33 | Intensive Cardiac Rehabilitation | 06/02/2013 |  |
+| E34 | Pulmonary Rehabilitation - Technical Component | 06/02/2013 | 05/01/2017 |
+| E35 | Pulmonary Rehabilitation - Professional Component | 06/02/2013 | 05/01/2017 |
+| E36 | Convenience Care | 06/02/2013 |  |
+| E37 | Telemedicine | 07/01/2015 |  |
+| E38 | Pharmacist Services | 07/01/2015 |  |
+| E39 | Diabetic Education | 03/01/2016 |  |
+| E40 | Early Intervention | 11/01/2016 |  |
+| EO | Applied Behavioral Analysis Therapy | 03/01/2017 | 07/01/2017 |
+| F1 | Medical Coverage | 11/01/2015 |  |
+| F2 | Social Work Coverage | 11/01/2015 |  |
+| F3 | Dental Coverage | 11/01/2015 |  |
+| F4 | Hearing Coverage | 11/01/2015 |  |
+| F5 | Prescription Drug Coverage | 11/01/2015 |  |
+| F6 | Vision Coverage | 11/01/2015 |  |
+| F7 | Orthodontia Coverage | 11/01/2015 |  |
+| F8 | Mental Health Coverage | 11/01/2015 |  |
+
+More on service type codes on the [official X12 website](https://x12.org/codes/service-type-codes).
+* _Note: Use the 
+"Show All" filter to view current and deprecated codes (page only displays current codes by default.)_
+
+
 Version 0.3.3
 -------------
 
