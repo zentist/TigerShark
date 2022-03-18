@@ -69,7 +69,7 @@ Segment( u'PER', Properties(syntax=u'P0304 P0506 P0708',position=u'1300',req_sit
   Element( u'PER09', Properties(desc=u'Contact Inquiry Reference', req_sit=u'N', data_type=(u'AN',u'1',u'20'), position=9,
     codes=[] ) ),
 ),
-Segment( u'PER', Properties(syntax=u'P0304 P0506 P0708',position=u'1300',req_sit=u'R',repeat=u'>1',desc=u'Payer Technical Contact Information'),
+Segment( u'PER', Properties(syntax=u'P0304 P0506 P0708',position=u'1300',req_sit=u'S',repeat=u'>1',desc=u'Payer Technical Contact Information'),
   Element( u'PER01', Properties(desc=u'Contact Function Code', req_sit=u'R', data_type=(u'ID',u'2',u'2'), position=1,
     codes=[u'BL'] ) ),
   Element( u'PER02', Properties(desc=u'Name', req_sit=u'S', data_type=(u'AN',u'1',u'60'), position=2,
