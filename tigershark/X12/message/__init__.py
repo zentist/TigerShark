@@ -310,7 +310,11 @@ class X12Segment( X12Structure ):
         :param position: the position of the element.
         :returns: string value in this position.  No type conversion is done.
         """
-        return self.elements[int(position)]
+        from contextlib import suppress
+        try: # reduce possibly redundant op
+            return self.elements[position]
+        except Exception:
+            return self.elements[int(position)]
     def setByPos( self, position, value ):
         """Set an element of this segment, by position.
         Positions appear to be numbered from 1.  Position 0 is
