@@ -1304,7 +1304,13 @@ class D8(Conversion):
             year, month, day = int(raw[0:2]), int(raw[2:4]), int(raw[4:6])
             year += datetime.datetime.strptime('00', '%y').year
 
-        return datetime.date(year, month, day)
+        try:
+            return datetime.date(year, month, day)
+        except ValueError:
+            import traceback
+            print(f'failed to parse: {raw}')
+            traceback.print_exc()
+            return raw
 
     @staticmethod
     def python_to_x12(value):
