@@ -323,7 +323,7 @@ def extract_element_value(instance, attribute):
     )
 
     value = getattr(instance, attribute)
-    if isinstance(value, tuple) and len(value) == 2 and all([type(value) is str for x in value]):
+    if isinstance(value, tuple) and len(value) == 2 and all(isinstance(value, str) for x in value):
         value = {
             "code": value[0],
             "label": value[1]
@@ -333,8 +333,8 @@ def extract_element_value(instance, attribute):
 
     class_prop = type(instance).__dict__[attribute]
 
-    if not any([isinstance(class_prop, x) for x in extract_from_types]):
-        return  None
+    if not isinstance(class_prop, extract_from_types):
+        return None
 
     output = {
         "name": attribute,
@@ -356,14 +356,14 @@ def extract_element_value(instance, attribute):
             continue
         prop_val = getattr(class_prop, prop)
         if prop == "x12type":
-            if hasattr(prop_val, "__name__") and not any([isinstance(prop_val, x) for x in (X12LoopBridge, X12SegmentBridge, Facade)]) and hasattr(prop_val, "to_dict"):  # isinstance(prop_val, Conversion):
+            if hasattr(prop_val, "__name__") and not isinstance(prop_val, (X12LoopBridge, X12SegmentBridge, Facade)) and hasattr(prop_val, "to_dict"):  # isinstance(prop_val, Conversion):
                 prop_val = prop_val.to_dict()
             else:
                 prop_val = str(prop_val)
             output[prop] = prop_val
         elif isinstance(prop_val, Position):
             output[prop] = extract_position(prop_val)
-        elif any([isinstance(prop_val, x) for x in extract_from_types]):
+        elif isinstance(prop_val, extract_from_types):
             output[prop] = extract_element_value(class_prop, prop)
         else:
             output[prop] = str(prop_val)  # _to_python_dict(prop_val)
@@ -377,7 +377,7 @@ def extract_element_value(instance, attribute):
 
 
 def is_x12_obj(obj):
-    return isinstance(obj, X12LoopBridge) or isinstance(obj, X12SegmentBridge) or isinstance(obj, Facade)
+    return isinstance(obj, (X12LoopBridge, X12SegmentBridge, Facade))
 
 
 def _to_python_dict(instance):
@@ -393,19 +393,19 @@ def _to_python_dict(instance):
         ElementSequenceAccess,
     )
 
-    if type(instance) in [int, float, str, bool, type(None)]:
+    if isinstance(instance, (int, float, str, bool, type(None))) :
         return instance
-    elif type(instance) is Decimal:
+    elif isinstance(instance, Decimal) :
         return float(instance)
-    elif isinstance(instance, datetime.date) or isinstance(instance, datetime.time):
+    elif isinstance(instance, (datetime.date, datetime.time)):
         return instance.isoformat()
-    elif type(instance) is datetime.timedelta:
+    elif isinstance(instance, datetime.timedelta):
         return {
             "days": instance.days,
             "seconds": instance.seconds,
         }
-    elif isinstance(instance, list) or isinstance(instance, tuple) or isinstance(instance, set):
-        if isinstance(instance, tuple) and len(instance) == 2 and all([type(x) is str for x in instance]):
+    elif isinstance(instance, (list, tuple, set)):
+        if isinstance(instance, tuple) and len(instance) == 2 and all([isinstance(x, str) for x in instance]):
             return {
                 "code": instance[0],
                 "label": instance[1]
@@ -420,47 +420,46 @@ def _to_python_dict(instance):
 
     check_types = [X12Loop, X12Message, X12Segment, X12Structure, X12LoopBridge, X12SegmentBridge]
     match_types = [x.__name__ for x in check_types if isinstance(instance, x)]
-    if len(match_types) > 0:
+    if match_types:
         if type(instance.__class__.__name__) not in match_types:
             match_types.append(instance.__class__.__name__)
         # record["_type"] = instance.__class__.__name__
         # record["_types"] = match_types
 
     for k, v in properties:
-        if any([isinstance(instance, x) for x in (X12LoopBridge, X12SegmentBridge, Facade)]):
+        if isinstance(instance, (X12LoopBridge, X12SegmentBridge, Facade)):
             element_value = extract_element_value(instance, k)
             if element_value is not None:
                 record[k] = element_value
                 continue
-        if type(v) in [int, float, str, bool, type(None)]:
+        if isinstance(v, (int, float, str, bool, type(None))):
             record[k] = v
-        elif type(v) is datetime.timedelta:
+        elif isinstance(v, datetime.timedelta):
             record[k] = {
                 "days": v.days,
                 "seconds": v.seconds,
             }
-        elif inspect.ismethod(v) or inspect.isbuiltin(v) or isinstance(v, types.FunctionType) or isinstance(v, property):
-            pass
-        elif isinstance(v, X12Structure):
-            pass
-        elif isinstance(v, list) or isinstance(v, tuple) or isinstance(v, set):
-            if isinstance(v, tuple) and len(v) == 2 and all([type(x) is str for x in v]):
+        elif isinstance(v, (list, tuple, set)):
+            if isinstance(v, tuple) and len(v) == 2 and all([isinstance(x, str) for x in v]):
                 record[k] = {
                     "code": v[0],
                     "label": v[1]
                 }
             else:
                 record[k] = [_to_python_dict(x) for x in v]
-        elif type(v) is Decimal:
+        elif isinstance(v, Decimal):
             record[k] = float(v)
-        elif isinstance(v, datetime.date) or isinstance(v, datetime.time):
+        elif isinstance(v, (datetime.date, datetime.time)):
             record[k] = v.isoformat()
-        elif isinstance(v, X12LoopBridge) or isinstance(v, X12SegmentBridge) or isinstance(v, Facade):
+        elif isinstance(v, (X12LoopBridge, X12SegmentBridge, Facade)):
             record[k] = v.to_dict()
-        elif any([isinstance(v, x) for x in extract_from_types]):
+        elif isinstance(v, extract_from_types):
             record[k] = extract_element_value(instance, k)
         else:
-            raise TypeError("Cannot parse '{0}'; type is '{1}'".format(k, str(type(v))))
+            if inspect.ismethod(v) or inspect.isbuiltin(v) or isinstance(v, types.FunctionType) or isinstance(v, property) or isinstance(v, X12Structure):
+                pass
+            else:
+                raise TypeError("Cannot parse '{0}'; type is '{1}'".format(k, str(type(v))))
     return record
 
 
