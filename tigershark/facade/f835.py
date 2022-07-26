@@ -472,3 +472,9 @@ class F835_5010(Facade):
                 self.loops(ClaimsOverview, anX12Message))
             self.claims = self.loops(Claim, anX12Message)
             self.footer = first(self.loops(Footer, anX12Message))
+            
+            st02 = None
+            st = X12LoopBridge(anX12Message).segment('ST')
+            if st and st.segment:
+                st02 = st.segment.getByPos(2)
+            self.transaction_set_control_number = st02

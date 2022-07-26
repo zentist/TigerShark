@@ -12,6 +12,12 @@ class TestParsed835(unittest.TestCase):
             parsed = parsed_835.unmarshall(f.read().strip())
         self.facade = f835.F835_5010(parsed).facades[0]
 
+    def test_root_information(self):
+        fi = self.facade
+        self.assertEqual(
+            fi.transaction_set_control_number, '0001'
+        )
+
     def test_financial_information(self):
         fi = self.facade.header.financial_information
         self.assertEqual(
