@@ -454,10 +454,12 @@ class F835_4010(Facade):
             self.footer = first(self.loops(Footer, anX12Message))
 
 
-class F835_5010(Facade):
+class F835_5010(Facade, X12LoopBridge):
 
     transaction_set_identifier_code = '835'
     x12_version_string = '5010'
+
+    transaction_set_control_number = ElementAccess("ST", 2)
 
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
@@ -473,8 +475,4 @@ class F835_5010(Facade):
             self.claims = self.loops(Claim, anX12Message)
             self.footer = first(self.loops(Footer, anX12Message))
             
-            st02 = None
-            st = X12LoopBridge(anX12Message).segment('ST')
-            if st and st.segment:
-                st02 = st.segment.getByPos(2)
-            self.transaction_set_control_number = st02
+            self.loop = anX12Message
