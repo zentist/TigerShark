@@ -35,6 +35,13 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(fi.receiver_bank_account_number, '')
         self.assertEqual(fi.issue_date, datetime.date(2011, 9, 30))
 
+    def test_root_information(self):
+        fi = self.facade
+        self.assertEqual(
+            fi.transaction_set_control_number, '1234'
+        )
+
+
     def test_reassociation_trace_number(self):
         rtn = self.facade.header.reassociation_trace_number
         self.assertEqual(rtn.trace_type,
