@@ -17,7 +17,7 @@ python setup.py install
 3. Put a tag of a new version on the latest commit in the `master` branch. The tag should represent a new version in the
    format `vX.X.X`,
    where `X.X.X` is a version. For instance, `v1.0.0`.
-4. Add all changes into `CHANGELOG.md`. Follow the instructions in the head of the file.
+4. Add all changes into [CHANGELOG.md](CHANGELOG.md). Follow the instructions in the head of the file.
 5. Make a push the new tag into remote repository.
 6. Update the version in the dependencies for the necessary projects, e.g. zen-app. Follow [an article](https://www.notion.so/zentist/External-Dependencies-ee5587b0f685407d86faf19519b25df1#f703f94f4fc74e64842542699beb3e07).
 
