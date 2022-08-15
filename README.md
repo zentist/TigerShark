@@ -13,13 +13,13 @@ python setup.py install
 
 1. Read [an article](https://www.notion.so/zentist/External-Dependencies-ee5587b0f685407d86faf19519b25df1#1e0ff803633f4572b2e2a5d944325ba1).
 2. Make changes and commit.
-2. Decide on a new version number, follow a [semantic versioning](https://semver.org/spec/v2.0.0.html).
-3. Put a tag of a new version on the latest commit in the `master` branch. The tag should represent a new version in the
+3. Decide on a new version number, follow a [semantic versioning](https://semver.org/spec/v2.0.0.html).
+4. Put a tag of a new version on the latest commit in the `master` branch. The tag should represent a new version in the
    format `vX.X.X`,
    where `X.X.X` is a version. For instance, `v1.0.0`.
-4. Add all changes into [CHANGELOG.md](CHANGELOG.md). Follow the instructions in the head of the file.
-5. Make a push the new tag into remote repository.
-6. Update the version in the dependencies for the necessary projects, e.g. zen-app. Follow [an article](https://www.notion.so/zentist/External-Dependencies-ee5587b0f685407d86faf19519b25df1#f703f94f4fc74e64842542699beb3e07).
+5. Add all changes into [CHANGELOG.md](CHANGELOG.md). Follow the instructions in the head of the file.
+6. Make a push the new tag into remote repository.
+7. Update the version in the dependencies for the necessary projects, e.g. zen-app. Follow [an article](https://www.notion.so/zentist/External-Dependencies-ee5587b0f685407d86faf19519b25df1#f703f94f4fc74e64842542699beb3e07).
 
 ## Manually Generating the Parsers
 
