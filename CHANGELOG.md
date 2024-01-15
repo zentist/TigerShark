@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.6.0] - 2024-01-10
+
+### Changed
+  - [ZEN-19735](https://zentist.atlassian.net/browse/ZEN-19735) make address segments optional for parser type 005010X221A1 835 edi file
+
+## [0.5.0] - 2022-08-12
+
+### Changed
+  - [ZEN-12795](https://zentist.atlassian.net/browse/ZEN-12795) Add ST02 to 5010_835
 
 ## [0.4.0] - 2022-04-06
 
