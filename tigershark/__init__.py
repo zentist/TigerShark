@@ -2,11 +2,12 @@
 TigerShark - An X12 EDI message parser.
 """
 __all__ = ['X12VersionTuple']
-__version__ = "0.3.2"
+__version__ = "0.3.4"
 __authors__ = [
     "Steven Buss <steven.buss@gmail.com>",
     "Steven Lott <slott56@gmail.com>",
     "Dave Peticolas <dave.peticolas@gmail.com>",
+    "Cloud Cray <cloudcray@gmail.com>",
 ]
 
 from collections import namedtuple
@@ -97,3 +98,5 @@ X12_4010_X098A1 = X12VersionTuple.for_4010('X098A1')
 X12_4010_XXXC = X12VersionTuple.for_4010('XXXC')
 X12_5010_X221A1 = X12VersionTuple.for_5010('X221A1')
 X12_5010_X279A1 = X12VersionTuple.for_5010('X279A1')
+X12_5010_X222A1 = X12VersionTuple.for_5010('X222A1')
+X12_5010_X223A1 = X12VersionTuple.for_5010('X223A1')
