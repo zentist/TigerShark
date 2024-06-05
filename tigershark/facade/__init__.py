@@ -616,7 +616,7 @@ class X12SegmentBridge(object):
         sep = self.segment.message.getCompositeSeparator()
         result = []
         pos = 1
-        while self.segment.getByPos(pos) is not "":
+        while self.segment.getByPos(pos) != "":
             composite = self.segment.getByPos(pos)
             subElts = composite.split(sep)
             if subElts[0] in names:
