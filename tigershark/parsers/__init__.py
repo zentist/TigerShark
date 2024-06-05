@@ -14,6 +14,7 @@ from tigershark import (
     X12_5010_X279A1,
     X12_5010_X222A1,
     X12_5010_X223A1,
+    X12_5010_X224A2,
 )
 from tigershark.extras import standardSegment
 from tigershark.X12.parse import (
@@ -62,6 +63,7 @@ PARSER_MAP = {
         X12_4010_X098A1: [('M837_4010_X098_A1', 'parsed_837')],
         X12_5010_X222A1: [('M837_5010_X222_A1', 'parsed_837')],  # Professional Claims
         X12_5010_X223A1: [('M837_5010_X223_A1', 'parsed_837')],  # Institutional Claims
+        X12_5010_X224A2: [('M837_5010_X224_A2', 'parsed_837')],  # Dental Claims
     },
     '841': {
         X12_4010_XXXC: [('M841_4010_XXXC', 'parsed_841')],
